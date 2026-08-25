@@ -1,0 +1,1555 @@
+<!DOCTYPE html>
+<html lang="sv" class="h-full bg-slate-950 text-slate-100 antialiased">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Riksdag 2026 | Emil Steen (#5 M Östergötland) – Sannolikhetskalkylator</title>
+  <meta name="description" content="Interaktiv sannolikhetskalkylator och mandatprognos för Emil Steen (#5 Moderaterna Östergötland) inför Riksdagsvalet 2026." />
+  
+  <!-- Open Graph / Meta -->
+  <meta property="og:title" content="Riksdag 2026: Emil Steen (#5 M Östergötland)" />
+  <meta property="og:description" content="Räkna ut sannolikheten för tjänstgöring i riksdagen 2026–2030 baserat på opinionssiffror och ersättarregler." />
+  <meta property="og:type" content="website" />
+  <meta name="theme-color" content="#003366" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            mblue: {
+              50: '#eef6fc',
+              100: '#d9ebf9',
+              200: '#badcf5',
+              500: '#005ea2',
+              600: '#004c85',
+              700: '#003366',
+              800: '#002244',
+              900: '#00152b',
+              950: '#000c1a',
+            },
+            party: {
+              m: '#005ea2',
+              sd: '#d97706',
+              s: '#dc2626',
+              l: '#0284c7',
+              v: '#991b1b',
+              c: '#15803d',
+              kd: '#1d4ed8',
+              mp: '#16a34a',
+              other: '#64748b'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+          },
+          animation: {
+            'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            'bounce-gentle': 'bounce 2s infinite',
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Canvas Confetti CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+
+  <style>
+    /* Custom modern slider styling */
+    input[type=range] {
+      -webkit-appearance: none;
+      background: transparent;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      height: 22px;
+      width: 22px;
+      border-radius: 9999px;
+      background: #38bdf8;
+      border: 3px solid #0f172a;
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
+      margin-top: -7px;
+      transition: transform 0.1s ease, background-color 0.2s;
+    }
+    input[type=range]::-webkit-slider-thumb:active {
+      transform: scale(1.15);
+      background: #7dd3fc;
+    }
+    input[type=range]::-webkit-slider-runnable-track {
+      width: 100%;
+      height: 8px;
+      cursor: pointer;
+      background: #1e293b;
+      border-radius: 9999px;
+    }
+    input[type=range]:focus {
+      outline: none;
+    }
+
+    /* M Slider specific */
+    .slider-m::-webkit-slider-thumb {
+      background: #38bdf8 !important;
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.7) !important;
+    }
+    .slider-sd::-webkit-slider-thumb {
+      background: #fbbf24 !important;
+      box-shadow: 0 0 12px rgba(251, 191, 36, 0.7) !important;
+    }
+    .slider-s::-webkit-slider-thumb {
+      background: #f87171 !important;
+      box-shadow: 0 0 12px rgba(248, 113, 113, 0.7) !important;
+    }
+    .slider-l::-webkit-slider-thumb {
+      background: #38bdf8 !important;
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.7) !important;
+    }
+
+    /* Smooth SVG transitions */
+    .gauge-circle {
+      transition: stroke-dashoffset 0.6s cubic-bezier(0.4, 0, 0.2, 1), stroke 0.4s ease;
+    }
+
+    /* Glassmorphism utility */
+    .glass-panel {
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 pb-20 selection:bg-mblue-500 selection:text-white">
+
+  <!-- Floating Toast Notification -->
+  <div id="toast" class="fixed top-5 left-1/2 -translate-x-1/2 z-50 transition-all duration-300 transform -translate-y-20 opacity-0 pointer-events-none">
+    <div class="glass-panel text-white text-xs sm:text-sm font-medium px-4 py-2.5 rounded-full shadow-2xl flex items-center gap-2 border border-sky-500/30">
+      <i data-lucide="check-circle-2" class="w-4 h-4 text-sky-400"></i>
+      <span id="toast-message">Länk kopierad till urklipp!</span>
+    </div>
+  </div>
+
+  <!-- Header Banner -->
+  <header class="border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-md sticky top-0 z-40">
+    <div class="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-2.5">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-mblue-600 to-mblue-800 flex items-center justify-center font-black text-white text-lg shadow-lg shadow-mblue-700/30 border border-sky-400/30">
+          M
+        </div>
+        <div>
+          <div class="flex items-center gap-1.5">
+            <h1 class="text-sm sm:text-base font-bold text-white tracking-tight leading-none">Riksdag 2026</h1>
+            <span class="bg-sky-500/20 text-sky-300 text-[10px] font-semibold px-1.5 py-0.5 rounded border border-sky-500/30">Östergötland</span>
+          </div>
+          <p class="text-[11px] text-slate-400 font-medium">Emil Steen • Plats #5 på M-listan</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-1.5">
+        <button id="btn-share" onclick="copyShareUrl()" class="px-2.5 py-1.5 rounded-lg bg-slate-800/90 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-medium flex items-center gap-1.5 transition border border-slate-700 active:scale-95" title="Dela prognos">
+          <i data-lucide="share-2" class="w-3.5 h-3.5 text-sky-400"></i>
+          <span class="hidden xs:inline">Dela</span>
+        </button>
+        <button id="btn-reset" onclick="resetToDefaults()" class="p-1.5 rounded-lg bg-slate-850 hover:bg-slate-800 text-slate-400 hover:text-slate-200 text-xs transition border border-slate-800 active:scale-95" title="Återställ standardvärden">
+          <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-3xl mx-auto px-4 pt-4 sm:pt-6 space-y-5">
+
+    <!-- HERO: Sannolikhetsmätare (Circular Gauge) & Huvudstatus -->
+    <section class="glass-panel rounded-3xl p-5 sm:p-7 shadow-2xl relative overflow-hidden border border-slate-800">
+      <!-- Background subtle glow -->
+      <div id="hero-glow" class="absolute -right-20 -top-20 w-64 h-64 bg-sky-600/15 rounded-full blur-3xl pointer-events-none transition-all duration-700"></div>
+      <div id="hero-glow-left" class="absolute -left-20 -bottom-20 w-64 h-64 bg-mblue-600/10 rounded-full blur-3xl pointer-events-none transition-all duration-700"></div>
+
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-6 relative z-10">
+        
+        <!-- Left: Gauge visualization -->
+        <div class="relative flex flex-col items-center justify-center shrink-0">
+          <div class="relative w-44 h-44 sm:w-48 sm:h-48">
+            <svg class="w-full h-full transform -rotate-90" viewBox="0 0 120 120">
+              <!-- Background track -->
+              <circle
+                cx="60"
+                cy="60"
+                r="50"
+                stroke="currentColor"
+                stroke-width="10"
+                class="text-slate-800/80"
+                fill="transparent"
+              />
+              <!-- Animated progress ring -->
+              <circle
+                id="gauge-progress"
+                cx="60"
+                cy="60"
+                r="50"
+                stroke="url(#gauge-gradient)"
+                stroke-width="10"
+                stroke-linecap="round"
+                class="gauge-circle transition-all duration-700"
+                fill="transparent"
+                stroke-dasharray="314.159"
+                stroke-dashoffset="157"
+              />
+              <!-- SVG Gradients -->
+              <defs>
+                <linearGradient id="gauge-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop id="grad-stop-1" offset="0%" stop-color="#0284c7" />
+                  <stop id="grad-stop-2" offset="100%" stop-color="#38bdf8" />
+                </linearGradient>
+              </defs>
+            </svg>
+
+            <!-- Center Content in Gauge -->
+            <div class="absolute inset-0 flex flex-col items-center justify-center text-center p-2">
+              <span class="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Total Chans</span>
+              <div class="flex items-baseline justify-center">
+                <span id="prob-value" class="text-4xl sm:text-5xl font-extrabold tracking-tight text-white transition-all">45.0</span>
+                <span class="text-xl font-bold text-sky-400 ml-0.5">%</span>
+              </div>
+              <span id="prob-subtext" class="text-[10px] text-slate-400 font-medium mt-0.5 max-w-[100px] truncate">1:e ersättare</span>
+            </div>
+          </div>
+
+          <!-- Quick interactive confidence indicator -->
+          <div class="flex items-center gap-1.5 mt-2">
+            <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span id="seat-summary-tag" class="text-xs font-semibold text-slate-300">3 M-mandat (+0.4% till 4:e)</span>
+          </div>
+        </div>
+
+        <!-- Right: Status info & context -->
+        <div class="flex-1 text-center sm:text-left space-y-3.5 w-full">
+          <div>
+            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold tracking-wide border transition-all" id="status-badge">
+              <i data-lucide="shield-check" class="w-3.5 h-3.5" id="status-icon"></i>
+              <span id="status-text">Mycket goda utsikter för inhopp</span>
+            </div>
+            <h2 id="main-headline" class="text-xl sm:text-2xl font-bold text-white mt-2 leading-snug">
+              Emil är 1:e aktive ersättare
+            </h2>
+            <p id="main-description" class="text-xs sm:text-sm text-slate-300 leading-relaxed mt-1">
+              Med 3 mandat för M och Andreas Norlén som talman tar Magdalena Hermelin (#4) riksdagsplatsen. Emil Steen (#5) blir <span class="text-sky-300 font-semibold">förste ersättare</span> och kliver in vid första föräldraledighet, sjukdom eller statsrådsuppdrag.
+            </p>
+          </div>
+
+          <!-- Mini Stats Grid -->
+          <div class="grid grid-cols-3 gap-2 pt-1">
+            <div class="bg-slate-900/90 rounded-xl p-2.5 border border-slate-800 text-center">
+              <span class="text-[10px] uppercase font-semibold text-slate-400 block">M-Mandat</span>
+              <span id="stat-m-seats" class="text-lg font-bold text-sky-400">3 st</span>
+              <span class="text-[9px] text-slate-500 block">av 17 mandat</span>
+            </div>
+            <div class="bg-slate-900/90 rounded-xl p-2.5 border border-slate-800 text-center">
+              <span class="text-[10px] uppercase font-semibold text-slate-400 block">Dag 1 Plats</span>
+              <span id="stat-day1" class="text-lg font-bold text-amber-400">Nej</span>
+              <span id="stat-day1-sub" class="text-[9px] text-slate-500 block">Kräver 4 mandat</span>
+            </div>
+            <div class="bg-slate-900/90 rounded-xl p-2.5 border border-slate-800 text-center">
+              <span class="text-[10px] uppercase font-semibold text-slate-400 block">Position</span>
+              <span id="stat-pos" class="text-lg font-bold text-emerald-400">1:e Ers.</span>
+              <span id="stat-pos-sub" class="text-[9px] text-slate-500 block">Först i kön</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- TOGGLE: Andreas Norlén som Talman / Statsråd -->
+    <section class="glass-panel rounded-2xl p-4 border border-sky-500/20 bg-gradient-to-r from-sky-950/30 via-slate-900/80 to-slate-900/80">
+      <div class="flex items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-sky-500/10 border border-sky-500/30 flex items-center justify-center shrink-0 text-sky-400">
+            <i data-lucide="crown" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <div class="flex items-center gap-1.5">
+              <label for="toggle-norlen" class="font-semibold text-sm sm:text-base text-white cursor-pointer select-none">
+                Andreas Norlén avstår ordinarie plats
+              </label>
+              <span class="bg-emerald-500/20 text-emerald-300 text-[10px] font-semibold px-1.5 py-0.2 rounded border border-emerald-500/30">Praxis</span>
+            </div>
+            <p class="text-xs text-slate-400">Fortsatt Talman / Statsråd (ersättarkedjan flyttas upp ett steg)</p>
+          </div>
+        </div>
+
+        <label class="relative inline-flex items-center cursor-pointer shrink-0">
+          <input type="checkbox" id="toggle-norlen" class="sr-only peer" checked onchange="updateCalculations()" />
+          <div class="w-13 h-7 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[3px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-sky-600 shadow-inner"></div>
+        </label>
+      </div>
+    </section>
+
+    <!-- PRESET CHIPS / SNABBVAL -->
+    <section class="space-y-1.5">
+      <div class="flex items-center justify-between px-1">
+        <span class="text-xs font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-1">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5 text-sky-400"></i> Snabbscenarier
+        </span>
+        <span class="text-[11px] text-slate-500">Klicka för att ladda</span>
+      </div>
+      
+      <div class="flex items-center gap-1.5 overflow-x-auto pb-1.5 no-scrollbar scroll-smooth">
+        <button onclick="applyPreset('valet2022')" class="preset-btn shrink-0 px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 text-xs font-medium border border-slate-800 hover:border-slate-700 transition active:scale-95">
+          🗳️ Valet 2022 (M 18.5%, SD 19.8%)
+        </button>
+        <button onclick="applyPreset('novus2026')" class="preset-btn shrink-0 px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 text-xs font-medium border border-slate-800 hover:border-slate-700 transition active:scale-95">
+          📊 Opinionsläge 2026
+        </button>
+        <button onclick="applyPreset('m4seats')" class="preset-btn shrink-0 px-3 py-1.5 rounded-xl bg-sky-950/70 hover:bg-sky-900 text-sky-300 text-xs font-semibold border border-sky-600/40 transition active:scale-95">
+          🔥 M tar 4 mandat (20.6%)
+        </button>
+        <button onclick="applyPreset('sdduel')" class="preset-btn shrink-0 px-3 py-1.5 rounded-xl bg-amber-950/60 hover:bg-amber-900 text-amber-300 text-xs font-semibold border border-amber-600/40 transition active:scale-95">
+          ⚔️ SD-Duellen (0.1% marginal)
+        </button>
+        <button onclick="applyPreset('lover4')" class="preset-btn shrink-0 px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 text-xs font-medium border border-slate-800 hover:border-slate-700 transition active:scale-95">
+          🔵 L klarar 4%-spärren (4.2%)
+        </button>
+      </div>
+    </section>
+
+    <!-- SLIDERS: Huvudpartier (M, SD, S, L) -->
+    <section class="glass-panel rounded-3xl p-5 sm:p-6 border border-slate-800 space-y-5">
+      <div class="flex items-center justify-between">
+        <div>
+          <h3 class="text-base font-bold text-white flex items-center gap-2">
+            <i data-lucide="sliders" class="w-4 h-4 text-sky-400"></i>
+            Röstetal i Östergötland
+          </h3>
+          <p class="text-xs text-slate-400">Justera reglagen för att simulera mandatfördelningen</p>
+        </div>
+        <span class="text-[11px] font-mono bg-slate-900 px-2 py-1 rounded-md text-slate-400 border border-slate-800">
+          Totalt: <span id="total-pct-sum" class="text-white font-semibold">100.0%</span>
+        </span>
+      </div>
+
+      <!-- Slider 1: Moderaterna (M) -->
+      <div class="bg-gradient-to-r from-sky-950/40 via-slate-900/60 to-slate-900/60 p-3.5 rounded-2xl border border-sky-500/30 space-y-2">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span class="w-3.5 h-3.5 rounded-full bg-sky-500 shadow-sm shadow-sky-500/50"></span>
+            <span class="font-bold text-sm sm:text-base text-white">Moderaterna (M)</span>
+            <span id="m-mandates-badge" class="bg-sky-500/20 text-sky-300 text-xs font-bold px-2 py-0.5 rounded-full border border-sky-500/40">3 mandat</span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <button onclick="adjustParty('m', -0.1)" class="w-6 h-6 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center text-xs font-bold transition active:scale-95">-</button>
+            <span id="val-m" class="font-mono font-bold text-sky-400 text-base min-w-[54px] text-center">18.5%</span>
+            <button onclick="adjustParty('m', 0.1)" class="w-6 h-6 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center text-xs font-bold transition active:scale-95">+</button>
+          </div>
+        </div>
+        <input type="range" id="slider-m" class="slider-m w-full" min="8.0" max="32.0" step="0.1" value="18.5" oninput="onSliderInput('m', this.value)" />
+        <div class="flex justify-between text-[10px] text-slate-500 font-mono">
+          <span>8.0%</span>
+          <span class="text-sky-400/80 font-medium">⚡ 4:e mandatet vid ca 20.3%</span>
+          <span>32.0%</span>
+        </div>
+      </div>
+
+      <!-- Slider 2: Sverigedemokraterna (SD) -->
+      <div class="bg-slate-900/60 p-3.5 rounded-2xl border border-slate-800/80 space-y-2">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span class="w-3.5 h-3.5 rounded-full bg-amber-500"></span>
+            <span class="font-semibold text-sm sm:text-base text-white">Sverigedemokraterna (SD)</span>
+            <span id="sd-mandates-badge" class="bg-amber-500/20 text-amber-300 text-xs font-bold px-2 py-0.5 rounded-full border border-amber-500/30">4 mandat</span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <button onclick="adjustParty('sd', -0.1)" class="w-6 h-6 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center text-xs font-bold transition active:scale-95">-</button>
+            <span id="val-sd" class="font-mono font-bold text-amber-400 text-base min-w-[54px] text-center">19.8%</span>
+            <button onclick="adjustParty('sd', 0.1)" class="w-6 h-6 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center text-xs font-bold transition active:scale-95">+</button>
+          </div>
+        </div>
+        <input type="range" id="slider-sd" class="slider-sd w-full" min="10.0" max="32.0" step="0.1" value="19.8" oninput="onSliderInput('sd', this.value)" />
+        <div class="flex justify-between text-[10px] text-slate-500 font-mono">
+          <span>10.0%</span>
+          <span>Valet 2022: 19.8%</span>
+          <span>32.0%</span>
+        </div>
+      </div>
+
+      <!-- Slider 3: Socialdemokraterna (S) -->
+      <div class="bg-slate-900/60 p-3.5 rounded-2xl border border-slate-800/80 space-y-2">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span class="w-3.5 h-3.5 rounded-full bg-red-500"></span>
+            <span class="font-semibold text-sm sm:text-base text-white">Socialdemokraterna (S)</span>
+            <span id="s-mandates-badge" class="bg-red-500/20 text-red-300 text-xs font-bold px-2 py-0.5 rounded-full border border-red-500/30">6 mandat</span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <button onclick="adjustParty('s', -0.1)" class="w-6 h-6 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center text-xs font-bold transition active:scale-95">-</button>
+            <span id="val-s" class="font-mono font-bold text-red-400 text-base min-w-[54px] text-center">33.0%</span>
+            <button onclick="adjustParty('s', 0.1)" class="w-6 h-6 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center text-xs font-bold transition active:scale-95">+</button>
+          </div>
+        </div>
+        <input type="range" id="slider-s" class="slider-s w-full" min="20.0" max="45.0" step="0.1" value="33.0" oninput="onSliderInput('s', this.value)" />
+        <div class="flex justify-between text-[10px] text-slate-500 font-mono">
+          <span>20.0%</span>
+          <span>Valet 2022: 33.0%</span>
+          <span>45.0%</span>
+        </div>
+      </div>
+
+      <!-- Slider 4: Liberalerna (L) with 4% Threshold Rule -->
+      <div class="bg-slate-900/60 p-3.5 rounded-2xl border border-slate-800/80 space-y-2">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span class="w-3.5 h-3.5 rounded-full bg-sky-400"></span>
+            <span class="font-semibold text-sm sm:text-base text-white">Liberalerna (L)</span>
+            <span id="l-threshold-badge" class="bg-rose-500/20 text-rose-300 text-[10px] font-bold px-2 py-0.5 rounded-full border border-rose-500/30 flex items-center gap-1">
+              <i data-lucide="alert-triangle" class="w-3 h-3"></i> Under 4% (Nollställs)
+            </span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <button onclick="adjustParty('l', -0.1)" class="w-6 h-6 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center text-xs font-bold transition active:scale-95">-</button>
+            <span id="val-l" class="font-mono font-bold text-sky-300 text-base min-w-[54px] text-center">1.8%</span>
+            <button onclick="adjustParty('l', 0.1)" class="w-6 h-6 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center text-xs font-bold transition active:scale-95">+</button>
+          </div>
+        </div>
+        <input type="range" id="slider-l" class="slider-l w-full" min="0.5" max="8.0" step="0.1" value="1.8" oninput="onSliderInput('l', this.value)" />
+        <div class="flex justify-between text-[10px] text-slate-500 font-mono">
+          <span>0.5%</span>
+          <span class="text-amber-400/90 font-medium">⚠️ 4.0% riksdagsspärr</span>
+          <span>8.0%</span>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ACCORDION: Avancerade inställningar & övriga partier -->
+    <section class="glass-panel rounded-3xl border border-slate-800 overflow-hidden">
+      <button onclick="toggleAccordion('advanced-settings')" class="w-full p-4 sm:p-5 flex items-center justify-between text-left hover:bg-slate-850/50 transition">
+        <div class="flex items-center gap-2.5">
+          <i data-lucide="settings-2" class="w-4 h-4 text-sky-400"></i>
+          <div>
+            <span class="font-bold text-sm sm:text-base text-white">Avancerade inställningar & Övriga partier</span>
+            <p class="text-xs text-slate-400">Justera V, C, KD, MP och frånvarofrekvens</p>
+          </div>
+        </div>
+        <i id="accordion-icon" data-lucide="chevron-down" class="w-5 h-5 text-slate-400 transition-transform duration-300"></i>
+      </button>
+
+      <div id="advanced-settings" class="hidden p-5 pt-0 border-t border-slate-800/80 space-y-5 bg-slate-950/40">
+        
+        <!-- Grid for V, C, KD, MP -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-4">
+          
+          <!-- V -->
+          <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-800 space-y-1.5">
+            <div class="flex justify-between items-center text-xs">
+              <span class="font-semibold text-slate-200 flex items-center gap-1.5">
+                <span class="w-2.5 h-2.5 rounded-full bg-red-700"></span> Vänsterpartiet (V)
+              </span>
+              <span id="val-v" class="font-mono font-bold text-red-400">5.5%</span>
+            </div>
+            <input type="range" id="slider-v" class="w-full h-1.5" min="2.0" max="15.0" step="0.1" value="5.5" oninput="onSliderInput('v', this.value)" />
+            <div class="flex justify-between items-center text-[10px] text-slate-500">
+              <label class="flex items-center gap-1 cursor-pointer">
+                <input type="checkbox" id="check-v-sparr" checked onchange="updateCalculations()" class="rounded bg-slate-800 border-slate-700 text-sky-500" />
+                <span>Klarar 4%-spärren</span>
+              </label>
+              <span id="v-mandates-badge" class="text-slate-400 font-bold">1 mandat</span>
+            </div>
+          </div>
+
+          <!-- C -->
+          <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-800 space-y-1.5">
+            <div class="flex justify-between items-center text-xs">
+              <span class="font-semibold text-slate-200 flex items-center gap-1.5">
+                <span class="w-2.5 h-2.5 rounded-full bg-green-700"></span> Centerpartiet (C)
+              </span>
+              <span id="val-c" class="font-mono font-bold text-green-400">4.8%</span>
+            </div>
+            <input type="range" id="slider-c" class="w-full h-1.5" min="2.0" max="15.0" step="0.1" value="4.8" oninput="onSliderInput('c', this.value)" />
+            <div class="flex justify-between items-center text-[10px] text-slate-500">
+              <label class="flex items-center gap-1 cursor-pointer">
+                <input type="checkbox" id="check-c-sparr" checked onchange="updateCalculations()" class="rounded bg-slate-800 border-slate-700 text-sky-500" />
+                <span>Klarar 4%-spärren</span>
+              </label>
+              <span id="c-mandates-badge" class="text-slate-400 font-bold">1 mandat</span>
+            </div>
+          </div>
+
+          <!-- KD -->
+          <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-800 space-y-1.5">
+            <div class="flex justify-between items-center text-xs">
+              <span class="font-semibold text-slate-200 flex items-center gap-1.5">
+                <span class="w-2.5 h-2.5 rounded-full bg-blue-700"></span> Kristdemokraterna (KD)
+              </span>
+              <span id="val-kd" class="font-mono font-bold text-blue-400">5.2%</span>
+            </div>
+            <input type="range" id="slider-kd" class="w-full h-1.5" min="2.0" max="15.0" step="0.1" value="5.2" oninput="onSliderInput('kd', this.value)" />
+            <div class="flex justify-between items-center text-[10px] text-slate-500">
+              <label class="flex items-center gap-1 cursor-pointer">
+                <input type="checkbox" id="check-kd-sparr" checked onchange="updateCalculations()" class="rounded bg-slate-800 border-slate-700 text-sky-500" />
+                <span>Klarar 4%-spärren</span>
+              </label>
+              <span id="kd-mandates-badge" class="text-slate-400 font-bold">1 mandat</span>
+            </div>
+          </div>
+
+          <!-- MP -->
+          <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-800 space-y-1.5">
+            <div class="flex justify-between items-center text-xs">
+              <span class="font-semibold text-slate-200 flex items-center gap-1.5">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-600"></span> Miljöpartiet (MP)
+              </span>
+              <span id="val-mp" class="font-mono font-bold text-emerald-400">4.5%</span>
+            </div>
+            <input type="range" id="slider-mp" class="w-full h-1.5" min="2.0" max="15.0" step="0.1" value="4.5" oninput="onSliderInput('mp', this.value)" />
+            <div class="flex justify-between items-center text-[10px] text-slate-500">
+              <label class="flex items-center gap-1 cursor-pointer">
+                <input type="checkbox" id="check-mp-sparr" checked onchange="updateCalculations()" class="rounded bg-slate-800 border-slate-700 text-sky-500" />
+                <span>Klarar 4%-spärren</span>
+              </label>
+              <span id="mp-mandates-badge" class="text-slate-400 font-bold">1 mandat</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Demografisk Frånvarofrekvens Slider -->
+        <div class="bg-slate-900/90 p-4 rounded-2xl border border-slate-800 space-y-2.5">
+          <div class="flex justify-between items-center">
+            <div>
+              <span class="font-bold text-sm text-white flex items-center gap-1.5">
+                <i data-lucide="user-check" class="w-4 h-4 text-emerald-400"></i>
+                Frånvarofrekvens (P_frånvaro)
+              </span>
+              <p class="text-xs text-slate-400">Sannolikhet för föräldraledighet/sjukdom/ministeruppdrag i gruppen under 4 år</p>
+            </div>
+            <span id="val-absence" class="font-mono font-bold text-emerald-400 text-base">45%</span>
+          </div>
+          <input type="range" id="slider-absence" class="w-full" min="10" max="90" step="5" value="45" oninput="onAbsenceSliderInput(this.value)" />
+          <div class="flex justify-between text-[10px] text-slate-500">
+            <span>10% (Låg)</span>
+            <span class="text-emerald-400/90">Standardvärde: 45% (baserat på 4 års riksdagsdata)</span>
+            <span>90% (Hög)</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- RESULTATKORT (Kort 1, 2, 3) -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      
+      <!-- Kort 1: Valnatten (Direktmandat) -->
+      <div class="glass-panel rounded-2xl p-4 sm:p-5 border border-slate-800 flex flex-col justify-between space-y-3 relative overflow-hidden">
+        <div class="flex items-center justify-between">
+          <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+            <i data-lucide="calendar-check" class="w-4 h-4 text-sky-400"></i>
+            Kort 1: Valnatten
+          </span>
+          <span id="card1-tag" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700">
+            Direktmandat
+          </span>
+        </div>
+
+        <div>
+          <h4 id="card1-title" class="text-lg font-bold text-white leading-tight">
+            3 M-mandat säkrade
+          </h4>
+          <p id="card1-desc" class="text-xs text-slate-300 mt-1 leading-relaxed">
+            M når inte det 4:e mandatet direkt. Platsen avgörs istället via ersättarkedjan under mandatperioden.
+          </p>
+        </div>
+
+        <div id="card1-footer" class="p-2.5 rounded-xl bg-slate-900/80 border border-slate-800 flex items-center gap-2">
+          <div id="card1-status-icon" class="w-7 h-7 rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center shrink-0">
+            <i data-lucide="clock" class="w-4 h-4"></i>
+          </div>
+          <div class="text-[11px]">
+            <span class="font-semibold text-white block">Dag 1 tjänstgöring:</span>
+            <span id="card1-status-sub" class="text-slate-400">Aktiveras först vid 4 mandat</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Kort 2: Mandatperioden (Ersättarplats) -->
+      <div class="glass-panel rounded-2xl p-4 sm:p-5 border border-slate-800 flex flex-col justify-between space-y-3 relative overflow-hidden">
+        <div class="flex items-center justify-between">
+          <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+            <i data-lucide="award" class="w-4 h-4 text-emerald-400"></i>
+            Kort 2: Mandatperioden
+          </span>
+          <span id="card2-tag" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+            Aktiv Ersättare
+          </span>
+        </div>
+
+        <div>
+          <h4 id="card2-title" class="text-lg font-bold text-emerald-400 leading-tight">
+            1:e Ersättare (45% chans)
+          </h4>
+          <p id="card2-desc" class="text-xs text-slate-300 mt-1 leading-relaxed">
+            Emil Steen står som nummer 1 att rycka in när någon av M:s 3 tjänstgörande ledamöter tar ledigt eller får annat uppdrag.
+          </p>
+        </div>
+
+        <div class="p-2.5 rounded-xl bg-slate-900/80 border border-slate-800 flex items-center gap-2">
+          <div class="w-7 h-7 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center shrink-0">
+            <i data-lucide="user-plus" class="w-4 h-4"></i>
+          </div>
+          <div class="text-[11px]">
+            <span class="font-semibold text-white block">Inhoppssannolikhet:</span>
+            <span id="card2-prob-text" class="text-slate-400">Mycket hög under 4 år</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Kort 3: SD-Duellen (Kampen om 4:e mandatet) -->
+      <div class="glass-panel rounded-2xl p-4 sm:p-5 border border-slate-800 flex flex-col justify-between space-y-3 relative overflow-hidden">
+        <div class="flex items-center justify-between">
+          <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+            <i data-lucide="swords" class="w-4 h-4 text-amber-400"></i>
+            Kort 3: SD-Duellen
+          </span>
+          <span id="duel-status-tag" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30">
+            Jämn kamp
+          </span>
+        </div>
+
+        <div>
+          <h4 id="duel-title" class="text-lg font-bold text-white leading-tight">
+            M jagar SD (-0.4%)
+          </h4>
+          <p id="duel-desc" class="text-xs text-slate-300 mt-1 leading-relaxed">
+            Jämförelsetal för M:s 4:e mandat mot SD:s 4:e mandat vid delare 7.
+          </p>
+        </div>
+
+        <!-- Duel Progress bar -->
+        <div class="space-y-1.5">
+          <div class="flex justify-between text-[11px] font-mono">
+            <span class="text-sky-400 font-bold">M: <span id="duel-m-quot">7 928</span></span>
+            <span class="text-amber-400 font-bold">SD: <span id="duel-sd-quot">8 485</span></span>
+          </div>
+          <div class="w-full h-2.5 bg-slate-800 rounded-full overflow-hidden flex border border-slate-700">
+            <div id="duel-m-bar" class="bg-sky-500 h-full transition-all duration-300" style="width: 48%;"></div>
+            <div id="duel-sd-bar" class="bg-amber-500 h-full transition-all duration-300" style="width: 52%;"></div>
+          </div>
+          <p id="duel-margin-text" class="text-[10px] text-slate-400 font-medium text-center">
+            M behöver ca +1 200 röster för att passera SD
+          </p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- M:s KANDIDATLISTA & ERSÄTTARKEDJA -->
+    <section class="glass-panel rounded-3xl p-5 sm:p-6 border border-slate-800 space-y-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <h3 class="text-base font-bold text-white flex items-center gap-2">
+            <i data-lucide="list-ordered" class="w-4 h-4 text-sky-400"></i>
+            Moderaternas Riksdagslista (Östergötland)
+          </h3>
+          <p class="text-xs text-slate-400">Konstitutionell ersättarkedja vid aktuellt mandatutfall</p>
+        </div>
+        <span class="text-xs text-sky-400 font-semibold bg-sky-950/60 px-2.5 py-1 rounded-lg border border-sky-600/30">
+          5 kandidater
+        </span>
+      </div>
+
+      <div class="space-y-2.5" id="candidate-list">
+        <!-- Candidate 1: Andreas Norlén -->
+        <div id="cand-1" class="candidate-row p-3 rounded-2xl bg-slate-900/80 border border-slate-800 flex items-center justify-between gap-3 transition">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-xl bg-slate-800 text-slate-300 font-bold flex items-center justify-center text-xs shrink-0">
+              #1
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="font-bold text-sm text-white">Andreas Norlén</span>
+                <span id="cand-1-badge" class="bg-purple-500/20 text-purple-300 text-[10px] font-bold px-2 py-0.5 rounded-md border border-purple-500/30">Talman</span>
+              </div>
+              <span id="cand-1-role" class="text-xs text-slate-400">Tilldelas mandat 1 (Avstår ordinarie riksdagsarbete)</span>
+            </div>
+          </div>
+          <span class="text-xs font-semibold text-purple-400 shrink-0">Talmanspost</span>
+        </div>
+
+        <!-- Candidate 2: Matilda Ekeblad -->
+        <div id="cand-2" class="candidate-row p-3 rounded-2xl bg-slate-900/80 border border-slate-800 flex items-center justify-between gap-3 transition">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-xl bg-sky-500/20 text-sky-300 font-bold flex items-center justify-center text-xs shrink-0 border border-sky-500/30">
+              #2
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="font-bold text-sm text-white">Matilda Ekeblad</span>
+                <span id="cand-2-badge" class="bg-sky-500/20 text-sky-300 text-[10px] font-bold px-2 py-0.5 rounded-md border border-sky-500/30">Ledamot</span>
+              </div>
+              <span id="cand-2-role" class="text-xs text-slate-400">Tjänstgörande riksdagsledamot (Mandat 1)</span>
+            </div>
+          </div>
+          <span class="text-xs font-semibold text-emerald-400 shrink-0">Ordinarie</span>
+        </div>
+
+        <!-- Candidate 3: John Weinerhall -->
+        <div id="cand-3" class="candidate-row p-3 rounded-2xl bg-slate-900/80 border border-slate-800 flex items-center justify-between gap-3 transition">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-xl bg-sky-500/20 text-sky-300 font-bold flex items-center justify-center text-xs shrink-0 border border-sky-500/30">
+              #3
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="font-bold text-sm text-white">John Weinerhall</span>
+                <span id="cand-3-badge" class="bg-sky-500/20 text-sky-300 text-[10px] font-bold px-2 py-0.5 rounded-md border border-sky-500/30">Ledamot</span>
+              </div>
+              <span id="cand-3-role" class="text-xs text-slate-400">Tjänstgörande riksdagsledamot (Mandat 2)</span>
+            </div>
+          </div>
+          <span class="text-xs font-semibold text-emerald-400 shrink-0">Ordinarie</span>
+        </div>
+
+        <!-- Candidate 4: Magdalena Hermelin -->
+        <div id="cand-4" class="candidate-row p-3 rounded-2xl bg-slate-900/80 border border-slate-800 flex items-center justify-between gap-3 transition">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-xl bg-sky-500/20 text-sky-300 font-bold flex items-center justify-center text-xs shrink-0 border border-sky-500/30">
+              #4
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="font-bold text-sm text-white">Magdalena Hermelin</span>
+                <span id="cand-4-badge" class="bg-emerald-500/20 text-emerald-300 text-[10px] font-bold px-2 py-0.5 rounded-md border border-emerald-500/30">Talmansersättare</span>
+              </div>
+              <span id="cand-4-role" class="text-xs text-slate-400">Tjänstgörande ledamot (träder in för Andreas Norlén)</span>
+            </div>
+          </div>
+          <span id="cand-4-status-tag" class="text-xs font-semibold text-emerald-400 shrink-0">Tjänstgör</span>
+        </div>
+
+        <!-- Candidate 5: Emil Steen (HERO CANDIDATE) -->
+        <div id="cand-5" class="candidate-row p-3.5 rounded-2xl bg-gradient-to-r from-sky-950/80 via-slate-900 to-slate-900 border-2 border-sky-400/60 flex items-center justify-between gap-3 shadow-lg shadow-sky-900/20 transition transform scale-[1.01]">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-sky-500 text-slate-950 font-black flex items-center justify-center text-sm shrink-0 shadow-md shadow-sky-500/40">
+              #5
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="font-bold text-base text-white">Emil Steen</span>
+                <span id="cand-5-badge" class="bg-sky-400 text-slate-950 text-[10px] font-extrabold px-2 py-0.5 rounded-md">1:e Ersättare</span>
+              </div>
+              <span id="cand-5-role" class="text-xs text-sky-200 font-medium">Träder in vid frånvaro bland M:s 3 ledamöter</span>
+            </div>
+          </div>
+          <div class="text-right shrink-0">
+            <span id="cand-5-prob" class="text-sm font-extrabold text-sky-400 block font-mono">45.0%</span>
+            <span class="text-[9px] text-slate-400">Chans till inhopp</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ÖSTERGÖTLANDS 17 MANDAT: FÖRDELNING & ÖVERSIKT -->
+    <section class="glass-panel rounded-3xl p-5 sm:p-6 border border-slate-800 space-y-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <h3 class="text-base font-bold text-white flex items-center gap-2">
+            <i data-lucide="layout-grid" class="w-4 h-4 text-sky-400"></i>
+            Östergötlands 17 Riksdagsmandat
+          </h3>
+          <p class="text-xs text-slate-400">14 fasta valkretsmandat + 3 utjämningsmandat</p>
+        </div>
+        <span class="text-xs font-mono font-bold text-slate-300 bg-slate-800 px-2.5 py-1 rounded-lg border border-slate-700">
+          Sainte-Laguë (1.2, 3, 5...)
+        </span>
+      </div>
+
+      <!-- Seat Grid (17 seats) -->
+      <div class="grid grid-cols-6 sm:grid-cols-9 md:grid-cols-17 gap-1.5" id="seats-grid">
+        <!-- Dynamic Seat Pills Injected Here -->
+      </div>
+
+      <!-- Party Summary Bar -->
+      <div class="bg-slate-900/90 rounded-2xl p-4 border border-slate-800 space-y-3">
+        <div class="flex justify-between items-center text-xs font-semibold text-slate-300">
+          <span>Mandatfördelning</span>
+          <span id="total-seats-count" class="text-sky-400">17 av 17 mandat fördelade</span>
+        </div>
+
+        <!-- Proportional bar -->
+        <div class="w-full h-4 rounded-xl overflow-hidden flex shadow-inner bg-slate-800 border border-slate-700/80" id="mandate-bar">
+          <!-- Dynamically populated party bars -->
+        </div>
+
+        <!-- Legend Pills -->
+        <div class="flex flex-wrap gap-2 pt-1" id="party-legend">
+          <!-- Dynamically populated legend -->
+        </div>
+      </div>
+    </section>
+
+    <!-- METODIK & SAMMANFATTNING -->
+    <section class="glass-panel rounded-2xl p-4 sm:p-5 border border-slate-800/80 text-xs text-slate-400 space-y-2.5 leading-relaxed">
+      <h4 class="text-sm font-bold text-slate-200 flex items-center gap-1.5">
+        <i data-lucide="info" class="w-4 h-4 text-sky-400"></i>
+        Om beräkningsmodellen & vallagen
+      </h4>
+      <p>
+        <strong>Jämkade uddatalsmetoden (Sainte-Laguë):</strong> Mandaten fördelas genom att partiernas röstetal divideras med 1,2 för första mandatet och därefter med uddatalen 3, 5, 7, 9 osv.
+      </p>
+      <p>
+        <strong>4,0 %-spärren:</strong> Partier under 4,0 % nationellt tilldelas inga mandat och deras röster nollställs vid mandatfördelningen. Detta gynnar direkt de större partierna (M, SD, S) i kampen om de sista mandaten.
+      </p>
+      <p>
+        <strong>Ersättarberäkning:</strong> Enligt Regeringsformen och Riksdagsordningen avstår riksdagens talman och statsråd från ordinarie ledamotsuppdrag. Deras platser fylls av förste ersättare på listan. Den demografiska sannolikheten för inhopp (45 %) baseras på 4 års historisk frånvarostatistik (föräldraledighet, sjukdom och regeringsuppdrag) för en 3-personers delegation.
+      </p>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="max-w-3xl mx-auto px-4 mt-8 text-center text-xs text-slate-400 space-y-1">
+    <p>Riksdagsvalet 2026 • Östergötlands läns valkrets</p>
+    <p class="text-slate-400">Framtagen för Emil Steen (#5 Moderaterna Östergötland) • Mobilanpassad webbapplikation</p>
+  </footer>
+
+  <!-- SCRIPT: BERÄKNINGSMOTOR OCH INTERAKTIVITET -->
+  <script>
+    // --- PARTIER & FÄRGER ---
+    const PARTIES = {
+      m:  { name: 'Moderaterna', short: 'M', color: '#005ea2', bgClass: 'bg-[#005ea2]', textClass: 'text-sky-400' },
+      sd: { name: 'Sverigedemokraterna', short: 'SD', color: '#d97706', bgClass: 'bg-amber-600', textClass: 'text-amber-400' },
+      s:  { name: 'Socialdemokraterna', short: 'S', color: '#dc2626', bgClass: 'bg-red-600', textClass: 'text-red-400' },
+      l:  { name: 'Liberalerna', short: 'L', color: '#0284c7', bgClass: 'bg-sky-600', textClass: 'text-sky-300' },
+      v:  { name: 'Vänsterpartiet', short: 'V', color: '#991b1b', bgClass: 'bg-red-800', textClass: 'text-red-300' },
+      c:  { name: 'Centerpartiet', short: 'C', color: '#15803d', bgClass: 'bg-emerald-700', textClass: 'text-emerald-300' },
+      kd: { name: 'Kristdemokraterna', short: 'KD', color: '#1d4ed8', bgClass: 'bg-blue-700', textClass: 'text-blue-300' },
+      mp: { name: 'Miljöpartiet', short: 'MP', color: '#16a34a', bgClass: 'bg-green-600', textClass: 'text-green-300' }
+    };
+
+    // Standardvärden (Valet 2022 i Östergötland & rikssiffror)
+    const DEFAULTS = {
+      m: 18.5,
+      sd: 19.8,
+      s: 33.0,
+      l: 1.8,
+      v: 5.5,
+      c: 4.8,
+      kd: 5.2,
+      mp: 4.5,
+      norlen: true,
+      absence: 45,
+      sparrL: false, // L under 4% som default
+      sparrV: true,
+      sparrC: true,
+      sparrKD: true,
+      sparrMP: true,
+    };
+
+    // Aktuellt tillstånd
+    let state = { ...DEFAULTS };
+    const TOTAL_SEATS = 17; // 14 fasta + 3 utjämning
+    const TOTAL_VOTES_EST = 300000; // Uppskattat antal röster i Östergötland
+
+    // --- INITIERING ---
+    window.addEventListener('DOMContentLoaded', () => {
+      loadStateFromUrl();
+      lucide.createIcons();
+      updateCalculations();
+    });
+
+    // --- ACCORDION TOGGLE ---
+    function toggleAccordion(id) {
+      const el = document.getElementById(id);
+      const icon = document.getElementById('accordion-icon');
+      if (el.classList.contains('hidden')) {
+        el.classList.remove('hidden');
+        icon.classList.add('rotate-180');
+      } else {
+        el.classList.add('hidden');
+        icon.classList.remove('rotate-180');
+      }
+    }
+
+    // --- PRESETS ---
+    function applyPreset(presetKey) {
+      if (presetKey === 'valet2022') {
+        state.m = 18.5;
+        state.sd = 19.8;
+        state.s = 33.0;
+        state.l = 1.8;
+        state.v = 5.5;
+        state.c = 4.8;
+        state.kd = 5.2;
+        state.mp = 4.5;
+        state.norlen = true;
+        state.absence = 45;
+      } else if (presetKey === 'novus2026') {
+        state.m = 19.2;
+        state.sd = 20.4;
+        state.s = 34.1;
+        state.l = 2.1;
+        state.v = 6.2;
+        state.c = 4.3;
+        state.kd = 4.1;
+        state.mp = 4.8;
+        state.norlen = true;
+        state.absence = 45;
+      } else if (presetKey === 'm4seats') {
+        state.m = 20.8;
+        state.sd = 19.2;
+        state.s = 32.5;
+        state.l = 1.8;
+        state.v = 5.5;
+        state.c = 4.8;
+        state.kd = 5.2;
+        state.mp = 4.5;
+        state.norlen = true;
+        state.absence = 45;
+        triggerCelebration();
+      } else if (presetKey === 'sdduel') {
+        state.m = 20.2;
+        state.sd = 20.3;
+        state.s = 32.0;
+        state.l = 1.8;
+        state.v = 5.5;
+        state.c = 4.8;
+        state.kd = 5.2;
+        state.mp = 4.5;
+        state.norlen = true;
+        state.absence = 45;
+      } else if (presetKey === 'lover4') {
+        state.m = 18.5;
+        state.sd = 19.5;
+        state.s = 32.0;
+        state.l = 4.2;
+        state.v = 5.5;
+        state.c = 4.8;
+        state.kd = 5.2;
+        state.mp = 4.5;
+        state.norlen = true;
+        state.absence = 45;
+      }
+
+      syncInputsWithState();
+      updateCalculations();
+      showToast('Scenariot laddat!');
+    }
+
+    function resetToDefaults() {
+      state = { ...DEFAULTS };
+      syncInputsWithState();
+      updateCalculations();
+      showToast('Återställt till standardvärden!');
+    }
+
+    function syncInputsWithState() {
+      ['m', 'sd', 's', 'l', 'v', 'c', 'kd', 'mp'].forEach(p => {
+        const slider = document.getElementById(`slider-${p}`);
+        if (slider) slider.value = state[p];
+        const valEl = document.getElementById(`val-${p}`);
+        if (valEl) valEl.innerText = state[p].toFixed(1) + '%';
+      });
+
+      const norlenEl = document.getElementById('toggle-norlen');
+      if (norlenEl) norlenEl.checked = state.norlen;
+
+      const absenceEl = document.getElementById('slider-absence');
+      if (absenceEl) absenceEl.value = state.absence;
+      const absValEl = document.getElementById('val-absence');
+      if (absValEl) absValEl.innerText = state.absence + '%';
+    }
+
+    // --- SLIDER EVENT HANDLERS ---
+    function onSliderInput(party, val) {
+      state[party] = parseFloat(val);
+      const valEl = document.getElementById(`val-${party}`);
+      if (valEl) valEl.innerText = state[party].toFixed(1) + '%';
+      updateCalculations();
+    }
+
+    function adjustParty(party, delta) {
+      let cur = state[party] || 0;
+      let next = Math.max(0, Math.min(50, Math.round((cur + delta) * 10) / 10));
+      state[party] = next;
+      const slider = document.getElementById(`slider-${party}`);
+      if (slider) slider.value = next;
+      const valEl = document.getElementById(`val-${party}`);
+      if (valEl) valEl.innerText = next.toFixed(1) + '%';
+      updateCalculations();
+    }
+
+    function onAbsenceSliderInput(val) {
+      state.absence = parseInt(val, 10);
+      document.getElementById('val-absence').innerText = state.absence + '%';
+      updateCalculations();
+    }
+
+    // --- HUVUDBERÄKNING (SAINTE-LAGUË & PROBABILITY) ---
+    function updateCalculations() {
+      // 1. Läs av togglar
+      state.norlen = document.getElementById('toggle-norlen').checked;
+
+      // 2. Beräkna 4%-spärr för varje parti
+      const eligibleParties = {};
+      let totalRawPct = 0;
+
+      for (let p in PARTIES) {
+        let pct = state[p] || 0;
+        totalRawPct += pct;
+
+        // Kontrollera om partiet klarar 4%-spärren
+        let passesSparr = false;
+        if (p === 'l') {
+          // L har direkt 4%-regel kopplad till sitt röstetal
+          passesSparr = pct >= 4.0;
+          const lBadge = document.getElementById('l-threshold-badge');
+          if (lBadge) {
+            if (passesSparr) {
+              lBadge.className = 'bg-emerald-500/20 text-emerald-300 text-[10px] font-bold px-2 py-0.5 rounded-full border border-emerald-500/30 flex items-center gap-1';
+              lBadge.innerHTML = '<i data-lucide="check" class="w-3 h-3"></i> Klarar 4% (Får mandat)';
+            } else {
+              lBadge.className = 'bg-rose-500/20 text-rose-300 text-[10px] font-bold px-2 py-0.5 rounded-full border border-rose-500/30 flex items-center gap-1';
+              lBadge.innerHTML = '<i data-lucide="alert-triangle" class="w-3 h-3"></i> Under 4% (Nollställs)';
+            }
+          }
+        } else {
+          // Övriga partier har valfri kryssruta eller > 4%
+          const checkEl = document.getElementById(`check-${p}-sparr`);
+          passesSparr = checkEl ? (checkEl.checked && pct >= 3.0) : pct >= 4.0;
+        }
+
+        if (passesSparr) {
+          eligibleParties[p] = {
+            votes: Math.round((pct / 100) * TOTAL_VOTES_EST),
+            pct: pct,
+            mandates: 0
+          };
+        }
+      }
+
+      document.getElementById('total-pct-sum').innerText = totalRawPct.toFixed(1) + '%';
+
+      // 3. Jämkade uddatalsmetoden (Sainte-Laguë: 1.2, 3, 5, 7, 9, 11...)
+      const quotientsList = [];
+
+      for (let p in eligibleParties) {
+        const partyData = eligibleParties[p];
+        const votes = partyData.votes;
+
+        // Skapa jämförelsetal upp till 8 mandat per parti
+        for (let seatIdx = 1; seatIdx <= 8; seatIdx++) {
+          let divisor = (seatIdx === 1) ? 1.2 : (2 * seatIdx - 1);
+          let quotient = votes / divisor;
+          quotientsList.push({
+            party: p,
+            seatNumForParty: seatIdx,
+            quotient: quotient,
+            divisor: divisor
+          });
+        }
+      }
+
+      // Sortera alla jämförelsetal fallande
+      quotientsList.sort((a, b) => b.quotient - a.quotient);
+
+      // Tilldela 17 mandat (14 fasta + 3 utjämning)
+      const allocatedSeats = quotientsList.slice(0, TOTAL_SEATS);
+      const partyMandates = { m: 0, sd: 0, s: 0, l: 0, v: 0, c: 0, kd: 0, mp: 0 };
+
+      allocatedSeats.forEach((seat, idx) => {
+        seat.totalSeatIndex = idx + 1; // 1-17
+        seat.isUtjamning = idx >= 14;
+        partyMandates[seat.party] = (partyMandates[seat.party] || 0) + 1;
+      });
+
+      const mSeats = partyMandates.m || 0;
+      const sdSeats = partyMandates.sd || 0;
+      const sSeats = partyMandates.s || 0;
+
+      // 4. BERÄKNA SANNOLIKHET FÖR EMIL STEEN (#5)
+      // Formel & logik:
+      // Om Norlén = Talman / Statsråd:
+      // Vid M >= 4: Emil har säkrad tjänstgöring från Dag 1 (100%)
+      // Vid M = 3: Emil är 1:e aktive ersättare -> P = P(Frånvaro) = 45%
+      // Vid M = 2: Emil är 2:e ersättare -> P = P(Dubbelfrånvaro) = 12%
+      // Vid M <= 1: P = 1%
+      // Om Norlén = Ordinarie ledamot:
+      // Vid M >= 5: 100%
+      // Vid M = 4: 1:e ersättare (45%)
+      // Vid M = 3: 2:e ersättare (12%)
+      
+      let totalProbability = 0;
+      let emilRole = '';
+      let emilBadge = '';
+      let statusHeadline = '';
+      let statusDesc = '';
+      let statusBadgeText = '';
+      let statusBadgeClass = '';
+      let statusIconName = 'shield-check';
+
+      const pAbsence = state.absence || 45;
+      const pDoubleAbsence = Math.round((pAbsence * 0.28)); // ca 12.6% vid 45%
+
+      if (state.norlen) {
+        // Norlén är Talman / Statsråd
+        if (mSeats >= 4) {
+          totalProbability = 100.0;
+          emilRole = 'Tjänstgörande riksdagsledamot från Dag 1';
+          emilBadge = 'Dag 1 Plats';
+          statusHeadline = 'Emil har säkrat plats i riksdagen!';
+          statusDesc = `Med ${mSeats} mandat för M och Andreas Norlén som talman tar Magdalena Hermelin och Emil Steen plats som tjänstgörande ledamöter direkt från riksdagens öppnande.`;
+          statusBadgeText = '100% Säkrad Plats (Dag 1)';
+          statusBadgeClass = 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40';
+          statusIconName = 'check-circle-2';
+        } else if (mSeats === 3) {
+          totalProbability = pAbsence;
+          emilRole = '1:e Aktive Ersättare (Träder in vid frånvaro)';
+          emilBadge = '1:e Ersättare';
+          statusHeadline = 'Emil är 1:e aktive ersättare';
+          statusDesc = `Med 3 mandat för M och Andreas Norlén som talman kliver Magdalena Hermelin (#4) in. Emil Steen (#5) blir 1:e ersättare och kliver in vid första föräldraledighet, sjukdom eller statssekreteraruppdrag.`;
+          statusBadgeText = 'Mycket goda utsikter (1:e ersättare)';
+          statusBadgeClass = 'bg-sky-500/20 text-sky-300 border-sky-500/40';
+          statusIconName = 'user-check';
+        } else if (mSeats === 2) {
+          totalProbability = pDoubleAbsence;
+          emilRole = '2:e Ersättare (Kräver dubbelfrånvaro)';
+          emilBadge = '2:e Ersättare';
+          statusHeadline = 'Emil är 2:e ersättare';
+          statusDesc = `Med 2 M-mandat träder John Weinerhall in för Andreas Norlén. Magdalena Hermelin är 1:e ersättare och Emil Steen blir 2:e ersättare.`;
+          statusBadgeText = '2:e Ersättare (Begränsad chans)';
+          statusBadgeClass = 'bg-amber-500/20 text-amber-300 border-amber-500/40';
+          statusIconName = 'clock';
+        } else {
+          totalProbability = 1.0;
+          emilRole = '4:e Ersättare';
+          emilBadge = '4:e Ersättare';
+          statusHeadline = 'Emil är 4:e ersättare';
+          statusDesc = 'M når endast 1 mandat. Emil är långt bak i ersättarkedjan.';
+          statusBadgeText = 'Låg sannolikhet';
+          statusBadgeClass = 'bg-rose-500/20 text-rose-300 border-rose-500/40';
+          statusIconName = 'alert-circle';
+        }
+      } else {
+        // Norlén tjänstgör som ordinarie ledamot
+        if (mSeats >= 5) {
+          totalProbability = 100.0;
+          emilRole = 'Tjänstgörande riksdagsledamot (Direktmandat)';
+          emilBadge = 'Ordinarie';
+          statusHeadline = 'Emil är ordinarie ledamot!';
+          statusDesc = 'Med 5 M-mandat tar Emil plats direkt på eget mandat.';
+          statusBadgeText = '100% Direktmandat';
+          statusBadgeClass = 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40';
+        } else if (mSeats === 4) {
+          totalProbability = pAbsence;
+          emilRole = '1:e Aktive Ersättare';
+          emilBadge = '1:e Ersättare';
+          statusHeadline = 'Emil är 1:e ersättare';
+          statusDesc = 'M tar 4 mandat. Eftersom Norlén ej avstår är Hermelin ordinarie och Emil blir 1:e ersättare.';
+          statusBadgeText = '1:e Ersättare (45% chans)';
+          statusBadgeClass = 'bg-sky-500/20 text-sky-300 border-sky-500/40';
+        } else {
+          totalProbability = pDoubleAbsence;
+          emilRole = '2:e Ersättare';
+          emilBadge = '2:e Ersättare';
+          statusHeadline = 'Emil är 2:e ersättare';
+          statusDesc = 'M tar 3 mandat och Norlén tjänstgör. Emil är 2:e ersättare.';
+          statusBadgeText = '2:e Ersättare';
+          statusBadgeClass = 'bg-amber-500/20 text-amber-300 border-amber-500/40';
+        }
+      }
+
+      // 5. UPPDATERA GAUGE & HERO UI
+      updateGauge(totalProbability);
+      document.getElementById('prob-subtext').innerText = emilBadge;
+      document.getElementById('main-headline').innerText = statusHeadline;
+      document.getElementById('main-description').innerText = statusDesc;
+
+      const badgeEl = document.getElementById('status-badge');
+      badgeEl.className = `inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold tracking-wide border transition-all ${statusBadgeClass}`;
+      document.getElementById('status-text').innerText = statusBadgeText;
+
+      // Stats
+      document.getElementById('stat-m-seats').innerText = `${mSeats} st`;
+      document.getElementById('stat-day1').innerText = (mSeats >= (state.norlen ? 4 : 5)) ? 'JA' : 'Nej';
+      document.getElementById('stat-day1').className = (mSeats >= (state.norlen ? 4 : 5)) ? 'text-lg font-bold text-emerald-400' : 'text-lg font-bold text-amber-400';
+      document.getElementById('stat-pos').innerText = emilBadge;
+
+      // Mandate Badges on Sliders
+      for (let p in PARTIES) {
+        const badge = document.getElementById(`${p}-mandates-badge`);
+        if (badge) {
+          const count = partyMandates[p] || 0;
+          badge.innerText = `${count} mandat`;
+        }
+      }
+
+      // 6. DUELLMODUL (M vs SD)
+      updateDuelModule(eligibleParties, quotientsList, mSeats, sdSeats);
+
+      // 7. RESULTATKORT 1 & 2
+      updateResultCards(mSeats, totalProbability, pAbsence);
+
+      // 8. M:S KANDIDATLISTA & ERSÄTTARKEDJA
+      updateCandidateList(mSeats);
+
+      // 9. MANDATÖVERSIKT & GRAF
+      updateMandateOverview(allocatedSeats, partyMandates);
+
+      // 10. Synkronisera URL Hash för delning
+      syncUrlHash();
+      lucide.createIcons();
+    }
+
+    // --- GAUGE ANIMATION & FÄRGER ---
+    function updateGauge(prob) {
+      const circle = document.getElementById('gauge-progress');
+      const valEl = document.getElementById('prob-value');
+      const circumference = 2 * Math.PI * 50; // ~314.159
+      
+      const offset = circumference - (prob / 100) * circumference;
+      circle.style.strokeDashoffset = offset;
+      
+      valEl.innerText = prob.toFixed(1);
+
+      // Dynamiska gradientfärger baserat på sannolikhet
+      const stop1 = document.getElementById('grad-stop-1');
+      const stop2 = document.getElementById('grad-stop-2');
+      const glow = document.getElementById('hero-glow');
+
+      if (prob >= 90) {
+        stop1.setAttribute('stop-color', '#10b981');
+        stop2.setAttribute('stop-color', '#34d399');
+        glow.className = 'absolute -right-20 -top-20 w-64 h-64 bg-emerald-500/20 rounded-full blur-3xl pointer-events-none transition-all duration-700';
+      } else if (prob >= 40) {
+        stop1.setAttribute('stop-color', '#0284c7');
+        stop2.setAttribute('stop-color', '#38bdf8');
+        glow.className = 'absolute -right-20 -top-20 w-64 h-64 bg-sky-500/20 rounded-full blur-3xl pointer-events-none transition-all duration-700';
+      } else if (prob >= 15) {
+        stop1.setAttribute('stop-color', '#d97706');
+        stop2.setAttribute('stop-color', '#fbbf24');
+        glow.className = 'absolute -right-20 -top-20 w-64 h-64 bg-amber-500/20 rounded-full blur-3xl pointer-events-none transition-all duration-700';
+      } else {
+        stop1.setAttribute('stop-color', '#64748b');
+        stop2.setAttribute('stop-color', '#94a3b8');
+        glow.className = 'absolute -right-20 -top-20 w-64 h-64 bg-slate-700/20 rounded-full blur-3xl pointer-events-none transition-all duration-700';
+      }
+    }
+
+    // --- DUELLMODUL (M vs SD) ---
+    function updateDuelModule(eligibleParties, quotientsList, mSeats, sdSeats) {
+      const mVotes = eligibleParties.m ? eligibleParties.m.votes : 0;
+      const sdVotes = eligibleParties.sd ? eligibleParties.sd.votes : 0;
+
+      // Jämförelsetal för M:s 4:e mandat (delare 7)
+      const m4Quot = Math.round(mVotes / 7);
+      // Jämförelsetal för SD:s 4:e mandat (delare 7)
+      const sd4Quot = Math.round(sdVotes / 7);
+
+      document.getElementById('duel-m-quot').innerText = m4Quot.toLocaleString('sv-SE');
+      document.getElementById('duel-sd-quot').innerText = sd4Quot.toLocaleString('sv-SE');
+
+      const sum = m4Quot + sd4Quot;
+      const mPercent = sum > 0 ? (m4Quot / sum) * 100 : 50;
+      const sdPercent = 100 - mPercent;
+
+      document.getElementById('duel-m-bar').style.width = `${mPercent}%`;
+      document.getElementById('duel-sd-bar').style.width = `${sdPercent}%`;
+
+      const diffQuot = m4Quot - sd4Quot;
+      const diffVotes = Math.round(Math.abs(diffQuot) * 7);
+      const diffPct = ((diffVotes / TOTAL_VOTES_EST) * 100).toFixed(2);
+
+      const duelTag = document.getElementById('duel-status-tag');
+      const duelTitle = document.getElementById('duel-title');
+      const duelDesc = document.getElementById('duel-desc');
+      const duelMarginText = document.getElementById('duel-margin-text');
+
+      if (m4Quot >= sd4Quot) {
+        duelTag.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
+        duelTag.innerText = 'M Före SD';
+        duelTitle.innerText = `M leder duellen (+${diffPct}%)`;
+        duelDesc.innerText = `M:s 4:e jämförelsetal slår SD:s 4:e mandat med ca ${diffVotes.toLocaleString('sv-SE')} röster.`;
+        duelMarginText.innerHTML = `<span class="text-emerald-400 font-semibold">M har ett försprång på +${diffPct} procentenheter</span>`;
+      } else {
+        duelTag.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30';
+        duelTag.innerText = 'SD Före';
+        duelTitle.innerText = `M jagar SD (-${diffPct}%)`;
+        duelDesc.innerText = `M behöver ca ${diffVotes.toLocaleString('sv-SE')} fler röster (+${diffPct} procentenheter) för att passera SD:s 4:e mandat.`;
+        duelMarginText.innerHTML = `<span class="text-amber-400 font-semibold">M behöver öka med +${diffPct}% (~${diffVotes.toLocaleString('sv-SE')} röster)</span>`;
+      }
+
+      // Uppdatera sammanfattnings-taggen vid mätaren
+      const seatSummary = document.getElementById('seat-summary-tag');
+      if (mSeats >= 4) {
+        seatSummary.innerText = `${mSeats} M-mandat (Säkrad plats!)`;
+        seatSummary.className = 'text-xs font-semibold text-emerald-300';
+      } else {
+        seatSummary.innerText = `${mSeats} M-mandat (${diffPct}% till 4:e)`;
+        seatSummary.className = 'text-xs font-semibold text-slate-300';
+      }
+    }
+
+    // --- RESULTATKORT ---
+    function updateResultCards(mSeats, prob, pAbsence) {
+      // Kort 1: Valnatten
+      const card1Title = document.getElementById('card1-title');
+      const card1Desc = document.getElementById('card1-desc');
+      const card1StatusIcon = document.getElementById('card1-status-icon');
+      const card1StatusSub = document.getElementById('card1-status-sub');
+      const card1Tag = document.getElementById('card1-tag');
+
+      if (mSeats >= 4) {
+        card1Title.innerText = `${mSeats} M-mandat säkrade!`;
+        card1Desc.innerText = 'M når 4 mandat. Platsen i riksdagen är säkrad från dag 1 när Andreas Norlén avstår!';
+        card1StatusIcon.className = 'w-7 h-7 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center shrink-0';
+        card1StatusIcon.innerHTML = '<i data-lucide="check" class="w-4 h-4"></i>';
+        card1StatusSub.innerText = 'Emil tillträder från Dag 1';
+        card1Tag.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
+        card1Tag.innerText = 'Säkrat från Dag 1';
+      } else {
+        card1Title.innerText = `${mSeats} M-mandat`;
+        card1Desc.innerText = 'M når 3 mandat. Platsen avgörs via ersättarkedjan under mandatperioden.';
+        card1StatusIcon.className = 'w-7 h-7 rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center shrink-0';
+        card1StatusIcon.innerHTML = '<i data-lucide="clock" class="w-4 h-4"></i>';
+        card1StatusSub.innerText = 'Kräver 4 mandat för direktplats';
+        card1Tag.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700';
+        card1Tag.innerText = 'Ersättarläge';
+      }
+
+      // Kort 2: Mandatperioden
+      const card2Title = document.getElementById('card2-title');
+      const card2Desc = document.getElementById('card2-desc');
+      const card2ProbText = document.getElementById('card2-prob-text');
+      const card2Tag = document.getElementById('card2-tag');
+
+      if (mSeats >= 4) {
+        card2Title.innerText = 'Ordinarie tjänstgöring';
+        card2Desc.innerText = 'Emil tjänstgör under hela 4-årsperioden som ersättare för talmannen.';
+        card2ProbText.innerText = '100% aktiv närvaro';
+        card2Tag.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
+        card2Tag.innerText = 'Full Tjänstgöring';
+      } else if (mSeats === 3) {
+        card2Title.innerText = `1:e Ersättare (${pAbsence}% chans)`;
+        card2Desc.innerText = 'Emil står först i kön för att ersätta Matilda Ekeblad, John Weinerhall eller Magdalena Hermelin.';
+        card2ProbText.innerText = 'Mycket hög sannolikhet på 4 år';
+        card2Tag.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-sky-500/20 text-sky-300 border border-sky-500/30';
+        card2Tag.innerText = '1:e Aktiv Ersättare';
+      } else {
+        card2Title.innerText = '2:e Ersättare (~12% chans)';
+        card2Desc.innerText = 'Kräver att två av M-ledamöterna är frånvarande samtidigt.';
+        card2ProbText.innerText = 'Måttlig sannolikhet';
+        card2Tag.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30';
+        card2Tag.innerText = '2:e Ersättare';
+      }
+    }
+
+    // --- KANDIDATLISTA & ERSÄTTARKEDJA ---
+    function updateCandidateList(mSeats) {
+      // 1. Andreas Norlén
+      const c1 = document.getElementById('cand-1');
+      const c1Badge = document.getElementById('cand-1-badge');
+      const c1Role = document.getElementById('cand-1-role');
+      if (state.norlen) {
+        c1Badge.innerText = 'Talman / Statsråd';
+        c1Role.innerText = 'Tilldelas mandat 1 (Avstår ordinarie riksdagsarbete)';
+      } else {
+        c1Badge.innerText = 'Ledamot #1';
+        c1Role.innerText = 'Tjänstgörande riksdagsledamot (Mandat 1)';
+      }
+
+      // 4. Magdalena Hermelin
+      const c4Badge = document.getElementById('cand-4-badge');
+      const c4Role = document.getElementById('cand-4-role');
+      const c4Status = document.getElementById('cand-4-status-tag');
+      
+      if (state.norlen) {
+        if (mSeats >= 3) {
+          c4Badge.innerText = 'Talmansersättare';
+          c4Role.innerText = 'Tjänstgörande ledamot (träder in för Andreas Norlén)';
+          c4Status.innerText = 'Tjänstgör';
+          c4Status.className = 'text-xs font-semibold text-emerald-400 shrink-0';
+        } else {
+          c4Badge.innerText = '1:e Ersättare';
+          c4Role.innerText = 'Förste ersättare i kön';
+          c4Status.innerText = 'Ersättare';
+          c4Status.className = 'text-xs font-semibold text-amber-400 shrink-0';
+        }
+      } else {
+        if (mSeats >= 4) {
+          c4Badge.innerText = 'Ledamot #4';
+          c4Role.innerText = 'Tjänstgörande ordinarie riksdagsledamot';
+          c4Status.innerText = 'Ordinarie';
+          c4Status.className = 'text-xs font-semibold text-emerald-400 shrink-0';
+        } else {
+          c4Badge.innerText = '1:e Ersättare';
+          c4Role.innerText = 'Förste ersättare i kön';
+          c4Status.innerText = 'Ersättare';
+          c4Status.className = 'text-xs font-semibold text-amber-400 shrink-0';
+        }
+      }
+
+      // 5. Emil Steen
+      const c5Badge = document.getElementById('cand-5-badge');
+      const c5Role = document.getElementById('cand-5-role');
+      const c5Prob = document.getElementById('cand-5-prob');
+
+      if (state.norlen && mSeats >= 4) {
+        c5Badge.innerText = 'Tjänstgörande Ledamot';
+        c5Role.innerText = 'Tjänstgör från Dag 1 som talmansersättare!';
+        c5Prob.innerText = '100%';
+        c5Prob.className = 'text-sm font-extrabold text-emerald-400 block font-mono';
+      } else if (state.norlen && mSeats === 3) {
+        c5Badge.innerText = '1:e Aktive Ersättare';
+        c5Role.innerText = 'Träder in vid frånvaro bland M:s 3 tjänstgörande ledamöter';
+        c5Prob.innerText = `${state.absence}%`;
+        c5Prob.className = 'text-sm font-extrabold text-sky-400 block font-mono';
+      } else if (state.norlen && mSeats === 2) {
+        c5Badge.innerText = '2:e Ersättare';
+        c5Role.innerText = 'Träder in vid dubbelfrånvaro i delegationen';
+        c5Prob.innerText = '12%';
+        c5Prob.className = 'text-sm font-extrabold text-amber-400 block font-mono';
+      } else {
+        c5Badge.innerText = 'Ersättare';
+        c5Role.innerText = 'Placerad i ersättarkedjan';
+        c5Prob.innerText = '< 5%';
+        c5Prob.className = 'text-sm font-extrabold text-slate-400 block font-mono';
+      }
+    }
+
+    // --- MANDATFÖRDELNING GRID & GRAF ---
+    function updateMandateOverview(allocatedSeats, partyMandates) {
+      const grid = document.getElementById('seats-grid');
+      grid.innerHTML = '';
+
+      allocatedSeats.forEach(seat => {
+        const partyInfo = PARTIES[seat.party] || { short: seat.party.toUpperCase(), color: '#64748b' };
+        const isM = seat.party === 'm';
+
+        const pill = document.createElement('div');
+        pill.className = `p-2 rounded-xl border flex flex-col items-center justify-center transition-all ${
+          isM 
+            ? 'bg-sky-950/80 border-sky-400/60 shadow-md shadow-sky-900/30' 
+            : 'bg-slate-900/90 border-slate-800'
+        }`;
+        
+        pill.innerHTML = `
+          <span class="text-[9px] font-mono ${isM ? 'text-sky-300 font-bold' : 'text-slate-400'}">#${seat.totalSeatIndex}</span>
+          <span class="w-3.5 h-3.5 rounded-full my-1 shadow-sm" style="background-color: ${partyInfo.color};"></span>
+          <span class="text-xs font-black ${isM ? 'text-sky-300' : 'text-white'}">${partyInfo.short}</span>
+          <span class="text-[8px] text-slate-400 font-mono">${seat.seatNumForParty}:a</span>
+        `;
+        grid.appendChild(pill);
+      });
+
+      // Proportional bar
+      const bar = document.getElementById('mandate-bar');
+      bar.innerHTML = '';
+
+      // Legend
+      const legend = document.getElementById('party-legend');
+      legend.innerHTML = '';
+
+      for (let p in partyMandates) {
+        const count = partyMandates[p];
+        if (count > 0) {
+          const partyInfo = PARTIES[p] || { name: p.toUpperCase(), short: p.toUpperCase(), color: '#64748b' };
+          const widthPct = (count / TOTAL_SEATS) * 100;
+
+          // Bar segment
+          const segment = document.createElement('div');
+          segment.style.width = `${widthPct}%`;
+          segment.style.backgroundColor = partyInfo.color;
+          segment.className = 'h-full transition-all duration-300 relative group cursor-pointer';
+          segment.title = `${partyInfo.name}: ${count} mandat`;
+          bar.appendChild(segment);
+
+          // Legend chip
+          const chip = document.createElement('div');
+          chip.className = 'flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-950 border border-slate-800 text-xs';
+          chip.innerHTML = `
+            <span class="w-2.5 h-2.5 rounded-full" style="background-color: ${partyInfo.color};"></span>
+            <span class="font-semibold text-slate-200">${partyInfo.short}</span>
+            <span class="font-mono font-bold text-white">${count}</span>
+          `;
+          legend.appendChild(chip);
+        }
+      }
+    }
+
+    // --- URL SYNC & DELNING ---
+    function syncUrlHash() {
+      const params = new URLSearchParams();
+      ['m', 'sd', 's', 'l', 'v', 'c', 'kd', 'mp'].forEach(p => {
+        params.set(p, state[p]);
+      });
+      params.set('norlen', state.norlen ? '1' : '0');
+      params.set('abs', state.absence);
+      
+      const newUrl = window.location.pathname + '#' + params.toString();
+      window.history.replaceState(null, '', newUrl);
+    }
+
+    function loadStateFromUrl() {
+      if (!window.location.hash) return;
+      try {
+        const hash = window.location.hash.substring(1);
+        const params = new URLSearchParams(hash);
+        ['m', 'sd', 's', 'l', 'v', 'c', 'kd', 'mp'].forEach(p => {
+          if (params.has(p)) {
+            state[p] = parseFloat(params.get(p));
+          }
+        });
+        if (params.has('norlen')) {
+          state.norlen = params.get('norlen') === '1';
+        }
+        if (params.has('abs')) {
+          state.absence = parseInt(params.get('abs'), 10);
+        }
+        syncInputsWithState();
+      } catch (e) {
+        console.error('Kunde inte läsa URL-parametrar', e);
+      }
+    }
+
+    function copyShareUrl() {
+      syncUrlHash();
+      const url = window.location.href;
+      navigator.clipboard.writeText(url).then(() => {
+        showToast('Analyslänk kopierad till urklipp!');
+      }).catch(() => {
+        showToast('Kunde inte kopiera automatiskt');
+      });
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      const msgEl = document.getElementById('toast-message');
+      msgEl.innerText = msg;
+      toast.classList.remove('-translate-y-20', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+
+      setTimeout(() => {
+        toast.classList.remove('translate-y-0', 'opacity-100');
+        toast.classList.add('-translate-y-20', 'opacity-0');
+      }, 2500);
+    }
+
+    // --- CELEBRATION (CONFETTI) ---
+    function triggerCelebration() {
+      if (typeof confetti === 'function') {
+        confetti({
+          particleCount: 80,
+          spread: 70,
+          origin: { y: 0.6 },
+          colors: ['#005ea2', '#38bdf8', '#fbbf24', '#ffffff']
+        });
+      }
+    }
+  </script>
+</body>
+</html>
