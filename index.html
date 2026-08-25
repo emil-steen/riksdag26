@@ -223,7 +223,7 @@
               <i data-lucide="shield-check" class="w-4 h-4 shrink-0" id="status-icon"></i>
               <span id="status-text" class="whitespace-nowrap">Mycket goda utsikter för inhopp</span>
             </div>
-            <h2 id="main-headline" class="text-2xl sm:text-3xl font-black text-slate-900 mt-2 leading-tight tracking-tight min-h-[3rem] sm:min-h-[3.5rem] flex items-center justify-center md:justify-start">
+            <h2 id="main-headline" class="text-xl sm:text-2xl font-black text-slate-900 mt-2 leading-tight tracking-tight h-14 flex items-center justify-center md:justify-start">
               Emil är 1:e aktive ersättare
             </h2>
           </div>
@@ -273,16 +273,16 @@
           🗳️ Valet 2022 (M 18.5%, SD 19.8%)
         </button>
         <button onclick="applyPreset('novus2026')" class="shrink-0 px-4 py-2 rounded-2xl bg-white/90 hover:bg-white text-slate-700 text-xs font-bold border border-slate-200/80 shadow-xs transition active:scale-95">
-          📊 Opinionsläge 2026
+          📊 Opinionsläget (Novus/SCB)
         </button>
-        <button onclick="applyPreset('m4seats')" class="shrink-0 px-4 py-2 rounded-2xl bg-sky-50 hover:bg-sky-100 text-mblue-700 text-xs font-extrabold border border-mblue-300 shadow-xs transition active:scale-95">
-          🔥 M tar 4 mandat (20.8%)
+        <button onclick="applyPreset('m4seats')" class="shrink-0 px-4 py-2 rounded-2xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-black border border-emerald-300 shadow-xs transition active:scale-95">
+          🎉 M 4 Mandat (M 20.8%)
         </button>
-        <button onclick="applyPreset('sdduel')" class="shrink-0 px-4 py-2 rounded-2xl bg-amber-50 hover:bg-amber-100 text-amber-800 text-xs font-extrabold border border-amber-300 shadow-xs transition active:scale-95">
-          ⚔️ SD-Duellen (0.1% marginal)
+        <button onclick="applyPreset('sdduel')" class="shrink-0 px-4 py-2 rounded-2xl bg-amber-50 hover:bg-amber-100 text-amber-800 text-xs font-black border border-amber-300 shadow-xs transition active:scale-95">
+          ⚔️ M vs SD Knivskarp duell
         </button>
-        <button onclick="applyPreset('lover4')" class="shrink-0 px-4 py-2 rounded-2xl bg-white/90 hover:bg-white text-slate-700 text-xs font-bold border border-slate-200/80 shadow-xs transition active:scale-95">
-          🔵 L klarar 4%-spärren (4.2%)
+        <button onclick="applyPreset('lover4')" class="shrink-0 px-4 py-2 rounded-2xl bg-sky-50 hover:bg-sky-100 text-sky-800 text-xs font-bold border border-sky-300 shadow-xs transition active:scale-95">
+          🔹 L över 4% (Mindre mandat till M/SD)
         </button>
       </div>
     </section>
@@ -321,11 +321,11 @@
             <button onclick="adjustParty('m', 0.1)" class="w-7 h-7 rounded-lg bg-slate-100 active:bg-slate-200 text-slate-700 flex items-center justify-center text-xs font-bold transition border border-slate-200">+</button>
           </div>
         </div>
-        <input type="range" id="slider-m" class="slider-m w-full" min="14.0" max="25.0" step="0.1" value="18.5" oninput="onSliderInput('m', this.value)" />
+        <input type="range" id="slider-m" class="slider-m w-full" min="15.0" max="26.0" step="0.1" value="18.5" oninput="onSliderInput('m', this.value)" />
         <div class="flex justify-between text-[10px] sm:text-[11px] text-slate-400 font-medium">
-          <span>14.0%</span>
+          <span>15.0%</span>
           <span class="text-mblue-600 font-bold">⚡ 4:e mandatet vid ca 20.3%</span>
-          <span>25.0%</span>
+          <span>26.0%</span>
         </div>
       </div>
 
@@ -348,9 +348,9 @@
             <button onclick="adjustParty('sd', 0.1)" class="w-7 h-7 rounded-lg bg-slate-100 active:bg-slate-200 text-slate-700 flex items-center justify-center text-xs font-bold transition border border-slate-200">+</button>
           </div>
         </div>
-        <input type="range" id="slider-sd" class="slider-sd w-full" min="14.0" max="26.0" step="0.1" value="19.8" oninput="onSliderInput('sd', this.value)" />
+        <input type="range" id="slider-sd" class="slider-sd w-full" min="15.0" max="26.0" step="0.1" value="19.8" oninput="onSliderInput('sd', this.value)" />
         <div class="flex justify-between text-[10px] sm:text-[11px] text-slate-400 font-medium">
-          <span>14.0%</span>
+          <span>15.0%</span>
           <span>Valet 2022: 19.8%</span>
           <span>26.0%</span>
         </div>
@@ -842,6 +842,7 @@
     let state = { ...DEFAULTS };
     const TOTAL_SEATS = 17;
     const TOTAL_VOTES_EST = 300000;
+    let hasTriggeredCelebration = false;
 
     window.addEventListener('DOMContentLoaded', () => {
       loadStateFromUrl();
@@ -1058,7 +1059,7 @@
           totalProbability = 100.0;
           emilRole = 'Tjänstgörande riksdagsledamot från Dag 1';
           emilBadge = 'Dag 1 Plats';
-          statusHeadline = 'Emil har säkrat plats i riksdagen!';
+          statusHeadline = 'Emil tar plats i riksdagen!';
           statusDesc = `Med ${mSeats} mandat för M och Andreas Norlén som talman tar Magdalena Hermelin och Emil Steen plats som tjänstgörande ledamöter direkt från riksdagens öppnande.`;
           statusBadgeText = '100% Säkrad Plats (Dag 1)';
           statusBadgeClass = 'bg-emerald-50 text-emerald-800 border-emerald-200';
@@ -1117,6 +1118,15 @@
           statusBadgeText = '2:e Ersättare';
           statusBadgeClass = 'bg-amber-50 text-amber-800 border-amber-200';
         }
+      }
+
+      if (totalProbability >= 100.0) {
+        if (!hasTriggeredCelebration) {
+          triggerCelebration();
+          hasTriggeredCelebration = true;
+        }
+      } else {
+        hasTriggeredCelebration = false;
       }
 
       updateGauge(totalProbability);
