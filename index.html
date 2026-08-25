@@ -10,6 +10,11 @@
   <meta property="og:description" content="Räkna ut sannolikheten för tjänstgöring i riksdagen 2026–2030 baserat på opinionssiffror och ersättarregler." />
   <meta property="og:type" content="website" />
   <meta name="theme-color" content="#f4f7fb" />
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="alternate icon" href="favicon.svg" />
+  <link rel="apple-touch-icon" href="favicon.svg" />
 
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -273,7 +278,7 @@
           🗳️ Valet 2022 (M 18.5%, SD 19.8%)
         </button>
         <button onclick="applyPreset('novus2026')" class="shrink-0 px-4 py-2 rounded-2xl bg-white/90 hover:bg-white text-slate-700 text-xs font-bold border border-slate-200/80 shadow-xs transition active:scale-95">
-          📊 Opinionsläget (Novus/SCB)
+          📊 Opinionsläget (Novus aug 2026)
         </button>
         <button onclick="applyPreset('m4seats')" class="shrink-0 px-4 py-2 rounded-2xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-black border border-emerald-300 shadow-xs transition active:scale-95">
           🎉 M 4 Mandat (M 20.8%)
@@ -793,6 +798,9 @@
         <strong>Jämkade uddatalsmetoden (Sainte-Laguë):</strong> Mandaten fördelas genom att partiernas röstetal divideras med 1,2 för första mandatet och därefter med uddatalen 3, 5, 7, 9 osv.
       </p>
       <p>
+        <strong>Opinionsdata & datering:</strong> Standardvärden och opinionsläget baseras på senaste sammanvägda väljarbarometern från Novus/SCB (augusti 2026), viktat mot Östergötlands historiska valkretsutfall.
+      </p>
+      <p>
         <strong>4,0 %-spärren:</strong> Partier under 4,0 % nationellt tilldelas inga mandat och deras röster nollställs vid mandatfördelningen. Detta gynnar direkt de större partierna (M, SD, S) i kampen om de sista mandaten.
       </p>
       <p>
@@ -863,6 +871,7 @@
     }
 
     function applyPreset(presetKey) {
+      let toastMsg = 'Scenariot laddat!';
       if (presetKey === 'valet2022') {
         state.m = 18.5;
         state.sd = 19.8;
@@ -874,6 +883,7 @@
         state.mp = 4.5;
         state.norlen = true;
         state.absence = 45;
+        toastMsg = 'Valresultatet 2022 laddat!';
       } else if (presetKey === 'novus2026') {
         state.m = 19.2;
         state.sd = 20.4;
@@ -885,6 +895,7 @@
         state.mp = 4.8;
         state.norlen = true;
         state.absence = 45;
+        toastMsg = 'Opinionsläget (Novus augusti 2026) laddat!';
       } else if (presetKey === 'm4seats') {
         state.m = 20.8;
         state.sd = 19.2;
@@ -896,6 +907,7 @@
         state.mp = 4.5;
         state.norlen = true;
         state.absence = 45;
+        toastMsg = 'Scenariot M 4 mandat laddat!';
         triggerCelebration();
       } else if (presetKey === 'sdduel') {
         state.m = 20.2;
@@ -908,6 +920,7 @@
         state.mp = 4.5;
         state.norlen = true;
         state.absence = 45;
+        toastMsg = 'Duellscenariot M vs SD laddat!';
       } else if (presetKey === 'lover4') {
         state.m = 18.5;
         state.sd = 19.5;
@@ -919,11 +932,12 @@
         state.mp = 4.5;
         state.norlen = true;
         state.absence = 45;
+        toastMsg = 'Scenariot L över 4% laddat!';
       }
 
       syncInputsWithState();
       updateCalculations();
-      showToast('Scenariot laddat!');
+      showToast(toastMsg);
     }
 
     function resetToDefaults() {

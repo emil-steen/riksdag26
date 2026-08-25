@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0284c7"/>
+      <stop offset="50%" stop-color="#005ea2"/>
+      <stop offset="100%" stop-color="#002b5c"/>
+    </linearGradient>
+    <linearGradient id="specular" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0.05"/>
+    </linearGradient>
+  </defs>
+  <!-- Base Squircle with Liquid Glass gradient -->
+  <rect x="2" y="2" width="60" height="60" rx="16" fill="url(#bgGrad)" />
+  <!-- Glass Specular Border -->
+  <rect x="3" y="3" width="58" height="58" rx="15" fill="none" stroke="url(#specular)" stroke-width="2" />
+  <!-- Bold Modern M Logo -->
+  <path d="M17 46V18h6.2l8.8 15.5L40.8 18H47v28h-6V29.5L33.3 43h-2.6L23 29.5V46H17z" fill="#ffffff" />
+  <!-- Dynamic cyan highlight badge -->
+  <circle cx="49" cy="15" r="5" fill="#38bdf8" stroke="#ffffff" stroke-width="1.5" />
+</svg>
