@@ -226,9 +226,6 @@
             <h2 id="main-headline" class="text-2xl sm:text-3xl font-black text-slate-900 mt-2.5 leading-tight tracking-tight">
               Emil är 1:e aktive ersättare
             </h2>
-            <p id="main-description" class="text-sm text-slate-600 leading-relaxed mt-2">
-              Med 3 mandat för M och Andreas Norlén som talman tar Magdalena Hermelin (#4) riksdagsplatsen. Emil Steen (#5) blir <strong class="text-slate-900 font-extrabold">1:e ersättare</strong> och träder in vid föräldraledighet, sjukdom eller statsrådsuppdrag.
-            </p>
           </div>
 
           <!-- Airy 3-Column Summary Cards -->
@@ -1125,7 +1122,6 @@
       updateGauge(totalProbability);
       document.getElementById('prob-subtext').innerText = emilBadge;
       document.getElementById('main-headline').innerText = statusHeadline;
-      document.getElementById('main-description').innerText = statusDesc;
 
       const badgeEl = document.getElementById('status-badge');
       badgeEl.className = `inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-extrabold tracking-wide border transition-all ${statusBadgeClass}`;
