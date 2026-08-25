@@ -559,13 +559,15 @@
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5">
       
       <!-- Kort 1: Valnatten -->
-      <div class="liquid-glass rounded-[28px] p-5 sm:p-6 flex flex-col justify-between space-y-4">
-        <div class="flex items-center justify-between">
-          <span class="text-[11px] font-extrabold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
-            <i data-lucide="calendar-check" class="w-4 h-4 text-mblue-600"></i>
-            Valnatten
-          </span>
-          <span id="card1-tag" class="text-[10px] font-black px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200">
+      <div class="liquid-glass rounded-[28px] p-5 sm:p-6 flex flex-col justify-between space-y-4 overflow-hidden">
+        <div class="flex items-center justify-between gap-2">
+          <div class="flex items-center gap-1.5 min-w-0">
+            <i data-lucide="calendar-check" class="w-4 h-4 text-mblue-600 shrink-0"></i>
+            <span class="text-xs font-black uppercase tracking-wider text-slate-500 truncate">
+              Valnatten
+            </span>
+          </div>
+          <span id="card1-tag" class="text-[10px] font-black px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200 shrink-0 whitespace-nowrap">
             Direktmandat
           </span>
         </div>
@@ -579,26 +581,28 @@
           </p>
         </div>
 
-        <div id="card1-footer" class="p-3.5 rounded-2xl bg-white/90 border border-slate-200/80 flex items-center gap-3 shadow-xs">
+        <div id="card1-footer" class="p-3.5 rounded-2xl bg-white/90 border border-slate-200/80 flex items-center gap-3 shadow-xs min-w-0">
           <div id="card1-status-icon" class="w-9 h-9 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0 border border-amber-200">
             <i data-lucide="clock" class="w-4 h-4"></i>
           </div>
-          <div class="text-xs">
-            <span class="font-extrabold text-slate-900 block">Dag 1 tjänstgöring:</span>
-            <span id="card1-status-sub" class="text-slate-500 font-medium">Aktiveras vid 4 mandat</span>
+          <div class="text-xs min-w-0 flex-1">
+            <span class="font-extrabold text-slate-900 block truncate">Dag 1 tjänstgöring:</span>
+            <span id="card1-status-sub" class="text-slate-500 font-medium truncate block">Aktiveras vid 4 mandat</span>
           </div>
         </div>
       </div>
 
       <!-- Kort 2: Mandatperioden -->
-      <div class="liquid-glass rounded-[28px] p-5 sm:p-6 flex flex-col justify-between space-y-4">
-        <div class="flex items-center justify-between">
-          <span class="text-[11px] font-extrabold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
-            <i data-lucide="award" class="w-4 h-4 text-emerald-600"></i>
-            Mandatperioden
-          </span>
-          <span id="card2-tag" class="text-[10px] font-black px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
-            Aktiv Ersättare
+      <div class="liquid-glass rounded-[28px] p-5 sm:p-6 flex flex-col justify-between space-y-4 overflow-hidden">
+        <div class="flex items-center justify-between gap-2">
+          <div class="flex items-center gap-1.5 min-w-0">
+            <i data-lucide="award" class="w-4 h-4 text-emerald-600 shrink-0"></i>
+            <span class="text-xs font-black uppercase tracking-wider text-slate-500 truncate">
+              Mandatperioden
+            </span>
+          </div>
+          <span id="card2-tag" class="text-[10px] font-black px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 shrink-0 whitespace-nowrap">
+            1:e Ersättare
           </span>
         </div>
 
@@ -611,25 +615,27 @@
           </p>
         </div>
 
-        <div class="p-3.5 rounded-2xl bg-white/90 border border-slate-200/80 flex items-center gap-3 shadow-xs">
+        <div class="p-3.5 rounded-2xl bg-white/90 border border-slate-200/80 flex items-center gap-3 shadow-xs min-w-0">
           <div class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 border border-emerald-200">
             <i data-lucide="user-plus" class="w-4 h-4"></i>
           </div>
-          <div class="text-xs">
-            <span class="font-extrabold text-slate-900 block">Inhoppssannolikhet:</span>
-            <span id="card2-prob-text" class="text-slate-500 font-medium">Mycket hög under 4 år</span>
+          <div class="text-xs min-w-0 flex-1">
+            <span class="font-extrabold text-slate-900 block truncate">Inhoppschans:</span>
+            <span id="card2-prob-text" class="text-slate-500 font-medium truncate block">Mycket hög under 4 år</span>
           </div>
         </div>
       </div>
 
       <!-- Kort 3: SD-Duellen -->
-      <div class="liquid-glass rounded-[28px] p-5 sm:p-6 flex flex-col justify-between space-y-4">
-        <div class="flex items-center justify-between">
-          <span class="text-[11px] font-extrabold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
-            <i data-lucide="swords" class="w-4 h-4 text-amber-600"></i>
-            SD-Duellen
-          </span>
-          <span id="duel-status-tag" class="text-[10px] font-black px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200">
+      <div class="liquid-glass rounded-[28px] p-5 sm:p-6 flex flex-col justify-between space-y-4 overflow-hidden">
+        <div class="flex items-center justify-between gap-2">
+          <div class="flex items-center gap-1.5 min-w-0">
+            <i data-lucide="swords" class="w-4 h-4 text-amber-600 shrink-0"></i>
+            <span class="text-xs font-black uppercase tracking-wider text-slate-500 truncate">
+              SD-Duellen
+            </span>
+          </div>
+          <span id="duel-status-tag" class="text-[10px] font-black px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200 shrink-0 whitespace-nowrap">
             Jämn kamp
           </span>
         </div>
@@ -653,7 +659,7 @@
             <div id="duel-m-bar" class="bg-mblue-600 h-full transition-all duration-300" style="width: 48%;"></div>
             <div id="duel-sd-bar" class="bg-amber-500 h-full transition-all duration-300" style="width: 52%;"></div>
           </div>
-          <p id="duel-margin-text" class="text-[11px] text-slate-500 font-medium text-center">
+          <p id="duel-margin-text" class="text-[11px] text-slate-500 font-medium text-center truncate">
             M behöver ca +1 200 röster för att passera SD
           </p>
         </div>
@@ -1235,14 +1241,14 @@
       const duelMarginText = document.getElementById('duel-margin-text');
 
       if (m4Quot >= sd4Quot) {
-        duelTag.className = 'text-[10px] font-black px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200';
-        duelTag.innerText = 'M Före SD';
+        duelTag.className = 'text-[10px] font-black px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 shrink-0 whitespace-nowrap';
+        duelTag.innerText = 'M leder';
         duelTitle.innerText = `M leder duellen (+${diffPct}%)`;
         duelDesc.innerText = `M:s 4:e jämförelsetal slår SD:s 4:e mandat med ca ${diffVotes.toLocaleString('sv-SE')} röster.`;
         duelMarginText.innerHTML = `<span class="text-emerald-700 font-extrabold">M har ett försprång på +${diffPct} procentenheter</span>`;
       } else {
-        duelTag.className = 'text-[10px] font-black px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200';
-        duelTag.innerText = 'SD Före';
+        duelTag.className = 'text-[10px] font-black px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200 shrink-0 whitespace-nowrap';
+        duelTag.innerText = 'SD leder';
         duelTitle.innerText = `M jagar SD (-${diffPct}%)`;
         duelDesc.innerText = `M behöver ca ${diffVotes.toLocaleString('sv-SE')} fler röster (+${diffPct} procentenheter) för att passera SD:s 4:e mandat.`;
         duelMarginText.innerHTML = `<span class="text-amber-700 font-extrabold">M behöver öka med +${diffPct}% (~${diffVotes.toLocaleString('sv-SE')} röster)</span>`;
@@ -1271,15 +1277,15 @@
         card1StatusIcon.className = 'w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 border border-emerald-200';
         card1StatusIcon.innerHTML = '<i data-lucide="check" class="w-4 h-4"></i>';
         card1StatusSub.innerText = 'Emil tillträder från Dag 1';
-        card1Tag.className = 'text-[10px] font-black px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200';
-        card1Tag.innerText = 'Säkrat från Dag 1';
+        card1Tag.className = 'text-[10px] font-black px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 shrink-0 whitespace-nowrap';
+        card1Tag.innerText = 'Dag 1-Plats';
       } else {
         card1Title.innerText = `${mSeats} M-mandat`;
         card1Desc.innerText = 'M når 3 mandat. Platsen avgörs via ersättarkedjan under mandatperioden.';
         card1StatusIcon.className = 'w-9 h-9 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0 border border-amber-200';
         card1StatusIcon.innerHTML = '<i data-lucide="clock" class="w-4 h-4"></i>';
         card1StatusSub.innerText = 'Kräver 4 mandat för direktplats';
-        card1Tag.className = 'text-[10px] font-black px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200';
+        card1Tag.className = 'text-[10px] font-black px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200 shrink-0 whitespace-nowrap';
         card1Tag.innerText = 'Ersättarläge';
       }
 
@@ -1292,19 +1298,19 @@
         card2Title.innerText = 'Ordinarie tjänstgöring';
         card2Desc.innerText = 'Emil tjänstgör under hela 4-årsperioden som ersättare för talmannen.';
         card2ProbText.innerText = '100% aktiv närvaro';
-        card2Tag.className = 'text-[10px] font-black px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200';
-        card2Tag.innerText = 'Full Tjänstgöring';
+        card2Tag.className = 'text-[10px] font-black px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 shrink-0 whitespace-nowrap';
+        card2Tag.innerText = 'Dag 1-Plats';
       } else if (mSeats === 3) {
         card2Title.innerText = `1:e Ersättare (${pAbsence}% chans)`;
         card2Desc.innerText = 'Emil står först i kön för att ersätta Matilda Ekeblad, John Weinerhall eller Magdalena Hermelin.';
         card2ProbText.innerText = 'Mycket hög sannolikhet på 4 år';
-        card2Tag.className = 'text-[10px] font-black px-2.5 py-0.5 rounded-full bg-sky-50 text-mblue-800 border border-mblue-200';
-        card2Tag.innerText = '1:e Aktiv Ersättare';
+        card2Tag.className = 'text-[10px] font-black px-2.5 py-0.5 rounded-full bg-sky-50 text-mblue-800 border border-mblue-200 shrink-0 whitespace-nowrap';
+        card2Tag.innerText = '1:e Ersättare';
       } else {
         card2Title.innerText = '2:e Ersättare (~12% chans)';
         card2Desc.innerText = 'Kräver att två av M-ledamöterna är frånvarande samtidigt.';
         card2ProbText.innerText = 'Måttlig sannolikhet';
-        card2Tag.className = 'text-[10px] font-black px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200';
+        card2Tag.className = 'text-[10px] font-black px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200 shrink-0 whitespace-nowrap';
         card2Tag.innerText = '2:e Ersättare';
       }
     }
