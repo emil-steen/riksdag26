@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="sv" class="h-full bg-[#f4f7fb] text-slate-800 antialiased">
+<html lang="sv" class="h-full bg-[#eef4fb] text-slate-800 antialiased selection:bg-mblue-500 selection:text-white">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
@@ -9,7 +9,7 @@
   <meta property="og:title" content="Riksdag 2026: Emil Steen (#5 M Östergötland)" />
   <meta property="og:description" content="Räkna ut sannolikheten för tjänstgöring i riksdagen 2026–2030 baserat på opinionssiffror och ersättarregler." />
   <meta property="og:type" content="website" />
-  <meta name="theme-color" content="#f4f7fb" />
+  <meta name="theme-color" content="#eef4fb" />
   
   <!-- Favicon -->
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
@@ -25,16 +25,16 @@
         extend: {
           colors: {
             mblue: {
-              50: '#f0f7fc',
-              100: '#e0eff9',
-              200: '#b8ddf2',
-              300: '#7cbfe8',
-              400: '#389fda',
+              50: '#f0f6fc',
+              100: '#dceaf7',
+              200: '#bad7f1',
+              300: '#86bee8',
+              400: '#4aa0dd',
               500: '#005ea2',
               600: '#004c85',
-              700: '#003366',
-              800: '#00254b',
-              900: '#001934',
+              700: '#003866',
+              800: '#002647',
+              900: '#001a33',
             },
             party: {
               m: '#005ea2',
@@ -48,7 +48,16 @@
             }
           },
           fontFamily: {
-            sans: ['-apple-system', 'BlinkMacSystemFont', '"SF Pro Display"', '"SF Pro Text"', 'Inter', 'system-ui', 'Segoe UI', 'Roboto', 'sans-serif'],
+            sans: [
+              '-apple-system',
+              'BlinkMacSystemFont',
+              '"SF Pro Display"',
+              '"SF Pro Text"',
+              'system-ui',
+              '-apple-system-subheadline',
+              'Inter',
+              'sans-serif'
+            ],
           }
         }
       }
@@ -61,133 +70,334 @@
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
 
   <style>
-    /* Liquid Glass Aesthetic */
-    .liquid-glass {
-      background: rgba(255, 255, 255, 0.72);
+    /* Tabular figures across all numbers */
+    .tabular-nums, input[type=range], .font-mono, #prob-value, #duel-m-quot, #duel-sd-quot, #total-pct-sum {
+      font-variant-numeric: tabular-nums;
+      font-feature-settings: "tnum" 1, "cv02" 1, "cv03" 1;
+    }
+
+    /* Ambient chromatic mesh background (adapted to Swedish party palette: M, SD, S, C, MP, KD, L, V) */
+    .ambient-canvas {
+      position: fixed;
+      inset: 0;
+      pointer-events-none;
+      z-index: 0;
+      overflow: hidden;
+    }
+    /* M & L: Moderat marinblå & Liberal himmelsblå (vibrant) */
+    .ambient-orb-1 {
+      position: absolute;
+      top: -12%;
+      right: -8%;
+      width: 680px;
+      height: 680px;
+      background: radial-gradient(circle at 50% 50%, rgba(0, 102, 204, 0.45) 0%, rgba(56, 170, 240, 0.28) 42%, rgba(236, 243, 250, 0) 72%);
+      filter: blur(50px);
+      animation: driftOrb1 26s ease-in-out infinite alternate;
+    }
+    /* S & V: Socialdemokratisk & Vänster röd / korall (vibrant) */
+    .ambient-orb-2 {
+      position: absolute;
+      top: 20%;
+      left: -15%;
+      width: 620px;
+      height: 620px;
+      background: radial-gradient(circle at 50% 50%, rgba(225, 29, 72, 0.38) 0%, rgba(244, 63, 94, 0.22) 42%, rgba(236, 243, 250, 0) 72%);
+      filter: blur(55px);
+      animation: driftOrb2 30s ease-in-out infinite alternate;
+    }
+    /* SD: Varm bärnsten & guld (vibrant) */
+    .ambient-orb-3 {
+      position: absolute;
+      top: 46%;
+      right: -12%;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle at 50% 50%, rgba(245, 158, 11, 0.40) 0%, rgba(251, 191, 36, 0.24) 45%, rgba(236, 243, 250, 0) 72%);
+      filter: blur(55px);
+      animation: driftOrb3 28s ease-in-out infinite alternate;
+    }
+    /* C & MP: Center- & Miljöpartistisk smaragdgrön (vibrant) */
+    .ambient-orb-4 {
+      position: absolute;
+      bottom: 12%;
+      left: -10%;
+      width: 580px;
+      height: 580px;
+      background: radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.40) 0%, rgba(34, 197, 94, 0.22) 42%, rgba(236, 243, 250, 0) 72%);
+      filter: blur(55px);
+      animation: driftOrb4 32s ease-in-out infinite alternate;
+    }
+    /* KD: Kristdemokratisk djupblå (vibrant) */
+    .ambient-orb-5 {
+      position: absolute;
+      bottom: -15%;
+      right: 12%;
+      width: 580px;
+      height: 580px;
+      background: radial-gradient(circle at 50% 50%, rgba(37, 99, 235, 0.38) 0%, rgba(96, 165, 250, 0.20) 42%, rgba(236, 243, 250, 0) 72%);
+      filter: blur(60px);
+      animation: driftOrb5 34s ease-in-out infinite alternate;
+    }
+
+    @keyframes driftOrb1 {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(-45px, 35px) scale(1.08); }
+    }
+    @keyframes driftOrb2 {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(50px, -25px) scale(1.07); }
+    }
+    @keyframes driftOrb3 {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(-35px, -35px) scale(1.06); }
+    }
+    @keyframes driftOrb4 {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(40px, 30px) scale(1.08); }
+    }
+    @keyframes driftOrb5 {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(-30px, 25px) scale(1.05); }
+    }
+
+    /* Apple Liquid Glass Material */
+    .apple-glass-card {
+      background: rgba(255, 255, 255, 0.65);
+      backdrop-filter: blur(36px) saturate(210%) contrast(104%);
+      -webkit-backdrop-filter: blur(36px) saturate(210%) contrast(104%);
+      border: 1px solid rgba(255, 255, 255, 0.92);
+      box-shadow:
+        0 24px 48px -12px rgba(0, 35, 75, 0.08),
+        0 1px 2px 0 rgba(0, 0, 0, 0.02),
+        inset 0 1.5px 1px 0 rgba(255, 255, 255, 1),
+        inset 0 -1px 1px 0 rgba(0, 30, 60, 0.02);
+      border-radius: 32px;
+      transition: box-shadow 0.3s ease, border-color 0.3s ease;
+    }
+
+    .apple-glass-card:hover {
+      box-shadow:
+        0 28px 56px -12px rgba(0, 35, 75, 0.10),
+        0 1px 3px 0 rgba(0, 0, 0, 0.03),
+        inset 0 1.5px 1px 0 rgba(255, 255, 255, 1),
+        inset 0 -1px 1px 0 rgba(0, 30, 60, 0.02);
+    }
+
+    .apple-glass-inner {
+      background: rgba(255, 255, 255, 0.52);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.88);
+      box-shadow:
+        0 4px 16px -2px rgba(0, 35, 75, 0.04),
+        inset 0 1px 1px 0 rgba(255, 255, 255, 0.95);
+      border-radius: 22px;
+    }
+
+    .apple-glass-pill {
+      background: rgba(255, 255, 255, 0.65);
+      backdrop-filter: blur(20px) saturate(170%);
+      -webkit-backdrop-filter: blur(20px) saturate(170%);
+      border: 1px solid rgba(255, 255, 255, 0.85);
+      box-shadow:
+        0 3px 12px -2px rgba(0, 30, 70, 0.04),
+        inset 0 1px 1px 0 rgba(255, 255, 255, 0.95);
+    }
+
+    /* Candidate #5 Specular Liquid Highlight */
+    .apple-hero-specular {
+      position: relative;
+      background: linear-gradient(135deg, rgba(240, 247, 255, 0.85) 0%, rgba(255, 255, 255, 0.95) 50%, rgba(230, 244, 255, 0.8) 100%);
       backdrop-filter: blur(32px) saturate(200%);
       -webkit-backdrop-filter: blur(32px) saturate(200%);
-      border: 1px solid rgba(255, 255, 255, 0.95);
-      box-shadow: 0 16px 40px -12px rgba(0, 45, 90, 0.06), 0 1px 3px 0 rgba(0, 0, 0, 0.02), inset 0 1px 2px 0 rgba(255, 255, 255, 1);
+      border: 1.5px solid rgba(0, 94, 162, 0.28);
+      box-shadow:
+        0 14px 32px -6px rgba(0, 94, 162, 0.12),
+        inset 0 1.5px 1px 0 rgba(255, 255, 255, 1),
+        inset 0 -1px 2px 0 rgba(0, 94, 162, 0.05);
+      border-radius: 24px;
+      overflow: hidden;
+    }
+    .apple-hero-specular::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.9), transparent);
     }
 
-    .liquid-pill {
-      background: rgba(255, 255, 255, 0.85);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.9);
-      box-shadow: 0 4px 16px -2px rgba(0, 40, 80, 0.04), inset 0 1px 1px 0 rgba(255, 255, 255, 1);
-    }
-
-    /* Range Slider */
+    /* iOS Liquid Slider */
     input[type=range] {
       -webkit-appearance: none;
-      background: transparent;
+      appearance: none;
+      width: 100%;
+      height: 7px;
+      border-radius: 9999px;
+      outline: none;
+      margin: 10px 0;
+      cursor: pointer;
+      transition: background 0.15s ease;
     }
+
     input[type=range]::-webkit-slider-thumb {
       -webkit-appearance: none;
-      height: 26px;
-      width: 26px;
+      appearance: none;
+      width: 24px;
+      height: 24px;
       border-radius: 9999px;
       background: #ffffff;
-      border: 2.5px solid #005ea2;
-      cursor: pointer;
-      box-shadow: 0 4px 10px rgba(0, 40, 80, 0.18), 0 0 0 1px rgba(0, 0, 0, 0.04);
-      margin-top: -9px;
-      transition: transform 0.12s ease, box-shadow 0.15s ease;
+      border: 0.5px solid rgba(0, 0, 0, 0.04);
+      box-shadow:
+        0 3px 8px rgba(0, 30, 70, 0.16),
+        0 0.5px 1.5px rgba(0, 0, 0, 0.08),
+        inset 0 1px 1px rgba(255, 255, 255, 1);
+      cursor: grab;
+      transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.18s ease;
     }
+
     input[type=range]::-webkit-slider-thumb:active {
-      transform: scale(1.15);
-      box-shadow: 0 6px 16px rgba(0, 94, 162, 0.35), 0 0 0 4px rgba(0, 94, 162, 0.15);
+      cursor: grabbing;
+      transform: scale(1.16);
+      box-shadow:
+        0 6px 16px rgba(0, 50, 100, 0.24),
+        0 1px 3px rgba(0, 0, 0, 0.12),
+        inset 0 1px 1px rgba(255, 255, 255, 1);
     }
-    input[type=range]::-webkit-slider-runnable-track {
-      width: 100%;
-      height: 8px;
-      cursor: pointer;
-      background: #e2e8f0;
+
+    input[type=range]::-moz-range-thumb {
+      width: 24px;
+      height: 24px;
       border-radius: 9999px;
-      transition: background 0.2s;
-    }
-    input[type=range]:focus {
-      outline: none;
+      background: #ffffff;
+      border: 0.5px solid rgba(0, 0, 0, 0.04);
+      box-shadow: 0 3px 8px rgba(0, 30, 70, 0.16);
+      cursor: grab;
     }
 
-    .slider-m::-webkit-slider-thumb { border-color: #005ea2 !important; }
-    .slider-sd::-webkit-slider-thumb { border-color: #d97706 !important; }
-    .slider-s::-webkit-slider-thumb { border-color: #dc2626 !important; }
-    .slider-l::-webkit-slider-thumb { border-color: #0284c7 !important; }
+    /* Stepper +/- button */
+    .apple-stepper-btn {
+      width: 26px;
+      height: 26px;
+      border-radius: 9999px;
+      background: rgba(255, 255, 255, 0.85);
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      color: #334155;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+      transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .apple-stepper-btn:hover {
+      background: #ffffff;
+      color: #0f172a;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    }
+    .apple-stepper-btn:active {
+      transform: scale(0.88);
+      background: #f1f5f9;
+    }
 
+    /* Gauge Ring & Glass Center Lens */
     .gauge-circle {
-      transition: stroke-dashoffset 0.8s cubic-bezier(0.34, 1.4, 0.64, 1), stroke 0.4s ease;
+      transition: stroke-dashoffset 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .gauge-center-lens {
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.95);
+      box-shadow:
+        0 8px 24px -4px rgba(0, 35, 75, 0.08),
+        inset 0 1.5px 1px 0 rgba(255, 255, 255, 1);
+      border-radius: 9999px;
     }
 
-    /* Ambient background lights */
-    .ambient-glow-1 {
-      position: fixed;
-      top: -120px;
-      right: -120px;
-      width: 550px;
-      height: 550px;
-      background: radial-gradient(circle, rgba(186, 220, 245, 0.65) 0%, rgba(240, 247, 252, 0) 70%);
-      pointer-events-none;
-      z-index: 0;
+    /* Segmented Control Item */
+    .apple-seg-btn {
+      position: relative;
+      border-radius: 9999px;
+      padding: 6px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #475569;
+      background: transparent;
+      border: 1px solid transparent;
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    .ambient-glow-2 {
-      position: fixed;
-      top: 40%;
-      left: -150px;
-      width: 500px;
-      height: 500px;
-      background: radial-gradient(circle, rgba(224, 239, 249, 0.55) 0%, rgba(244, 247, 251, 0) 70%);
-      pointer-events-none;
-      z-index: 0;
+    .apple-seg-btn:hover {
+      color: #0f172a;
+      background: rgba(255, 255, 255, 0.4);
+    }
+    .apple-seg-btn:active {
+      transform: scale(0.96);
+    }
+    .apple-seg-btn.active {
+      background: rgba(255, 255, 255, 0.95);
+      color: #003866;
+      border-color: rgba(255, 255, 255, 1);
+      box-shadow: 0 3px 10px -1px rgba(0, 45, 95, 0.08), 0 1px 2px rgba(0, 0, 0, 0.03);
     }
 
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
 </head>
-<body class="min-h-screen bg-[#f4f7fb] text-slate-800 pt-6 pb-24 selection:bg-mblue-500 selection:text-white relative overflow-x-hidden">
+<body class="min-h-screen text-slate-800 pt-5 pb-24 relative overflow-x-hidden">
 
-  <!-- Ambient Light Orbs -->
-  <div class="ambient-glow-1"></div>
-  <div class="ambient-glow-2"></div>
+  <!-- Ambient Multi-Party Chromatic Mesh (M, SD, S, C, MP, KD, L, V) -->
+  <div class="ambient-canvas">
+    <div class="ambient-orb-1"></div>
+    <div class="ambient-orb-2"></div>
+    <div class="ambient-orb-3"></div>
+    <div class="ambient-orb-4"></div>
+    <div class="ambient-orb-5"></div>
+  </div>
 
   <!-- Toast Notification -->
   <div id="toast" class="fixed top-6 left-1/2 -translate-x-1/2 z-50 transition-all duration-300 transform -translate-y-24 opacity-0 pointer-events-none">
-    <div class="liquid-glass text-slate-900 text-xs sm:text-sm font-semibold px-5 py-3 rounded-full shadow-2xl flex items-center gap-2 border border-sky-200">
+    <div class="apple-glass-pill text-slate-900 text-xs sm:text-sm font-semibold px-5 py-2.5 rounded-full shadow-2xl flex items-center gap-2 border border-white/90">
       <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-600"></i>
-      <span id="toast-message">Länk kopierad till urklipp!</span>
+      <span id="toast-message">Länk kopierad till urklipp</span>
     </div>
   </div>
 
   <main class="max-w-3xl mx-auto px-4 sm:px-6 space-y-6 relative z-10">
 
-    <!-- TOP HERO CARD -->
-    <section class="liquid-glass rounded-[32px] p-6 sm:p-8 shadow-sm">
-      
-      <!-- Main Probability Visualizer & Summary -->
+    <!-- TOP HERO CARD: Liquid Glass Dial & Probability -->
+    <section class="apple-glass-card p-6 sm:p-8">
       <div class="flex flex-col md:flex-row items-center justify-between gap-8">
         
-        <!-- Gauge Visualizer -->
+        <!-- Apple-grade Circular Gauge -->
         <div class="relative flex flex-col items-center justify-center shrink-0">
           <div class="relative w-48 h-48 sm:w-52 sm:h-52">
             <svg class="w-full h-full transform -rotate-90" viewBox="0 0 120 120">
+              <!-- Background subtle track -->
               <circle
                 cx="60"
                 cy="60"
                 r="50"
-                stroke="currentColor"
-                stroke-width="8.5"
-                class="text-slate-200/70"
+                stroke="rgba(0, 40, 90, 0.08)"
+                stroke-width="8"
                 fill="transparent"
               />
+              <!-- Active progress path -->
               <circle
                 id="gauge-progress"
                 cx="60"
                 cy="60"
                 r="50"
                 stroke="url(#gauge-gradient)"
-                stroke-width="8.5"
+                stroke-width="8"
                 stroke-linecap="round"
                 class="gauge-circle"
                 fill="transparent"
@@ -197,57 +407,57 @@
               <defs>
                 <linearGradient id="gauge-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
                   <stop id="grad-stop-1" offset="0%" stop-color="#005ea2" />
-                  <stop id="grad-stop-2" offset="100%" stop-color="#0284c7" />
+                  <stop id="grad-stop-2" offset="100%" stop-color="#389fda" />
                 </linearGradient>
               </defs>
             </svg>
 
-            <!-- Center Content -->
-            <div class="absolute inset-0 flex flex-col items-center justify-center text-center p-3">
-              <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Total Chans</span>
+            <!-- Frosted Center Glass Lens -->
+            <div class="absolute inset-4 gauge-center-lens flex flex-col items-center justify-center text-center p-2 pointer-events-none">
+              <span class="text-[10px] font-semibold uppercase tracking-wider text-slate-400">Total Chans</span>
               <div class="flex items-baseline justify-center">
-                <span id="prob-value" class="text-4xl sm:text-5xl font-black tracking-tight text-slate-900">45.0</span>
-                <span class="text-xl font-black text-mblue-600 ml-0.5">%</span>
+                <span id="prob-value" class="text-4xl sm:text-5xl font-extrabold tracking-tight text-slate-900 tabular-nums">45.0</span>
+                <span class="text-xl font-bold text-mblue-600 ml-0.5">%</span>
               </div>
-              <span id="prob-subtext" class="text-[11px] text-mblue-800 font-bold mt-1 bg-white/90 px-3 py-0.5 rounded-full border border-mblue-200/80 shadow-xs whitespace-nowrap">
+              <span id="prob-subtext" class="text-[11px] text-mblue-900 font-bold mt-1 bg-white/90 px-3 py-0.5 rounded-full border border-mblue-200/60 shadow-xs whitespace-nowrap">
                 1:e ersättare
               </span>
             </div>
           </div>
 
-          <div class="flex items-center gap-2 mt-3">
-            <span id="pulse-dot" class="inline-block w-2.5 h-2.5 rounded-full bg-sky-500 animate-pulse"></span>
-            <span id="seat-summary-tag" class="text-xs font-bold text-slate-600">3 M-mandat (+0.4% till 4:e)</span>
+          <div class="flex items-center gap-2 mt-3.5">
+            <span id="pulse-dot" class="inline-block w-2 h-2 rounded-full bg-mblue-500 shadow-sm shadow-mblue-500/50 animate-pulse"></span>
+            <span id="seat-summary-tag" class="text-xs font-semibold text-slate-600">3 M-mandat (+0.4% till 4:e)</span>
           </div>
         </div>
 
-        <!-- Headline & Summary Details -->
-        <div class="flex-1 text-center md:text-left space-y-3 w-full">
+        <!-- Headline & Apple Summary Pills -->
+        <div class="flex-1 text-center md:text-left space-y-4 w-full">
           <div>
-            <div class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-extrabold tracking-wide border transition-all h-[28px]" id="status-badge">
-              <i data-lucide="shield-check" class="w-4 h-4 shrink-0" id="status-icon"></i>
+            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold tracking-wide border transition-all h-[28px]" id="status-badge">
+              <i data-lucide="shield-check" class="w-3.5 h-3.5 shrink-0" id="status-icon"></i>
               <span id="status-text" class="whitespace-nowrap">Mycket goda utsikter för inhopp</span>
             </div>
-            <h2 id="main-headline" class="text-xl sm:text-2xl font-black text-slate-900 mt-2 leading-tight tracking-tight h-14 flex items-center justify-center md:justify-start">
+            <h2 id="main-headline" class="text-xl sm:text-2xl font-extrabold text-slate-900 mt-2 leading-tight tracking-tight h-14 flex items-center justify-center md:justify-start">
               Emil är 1:e aktive ersättare
             </h2>
           </div>
 
-          <!-- Airy 3-Column Summary Cards -->
+          <!-- 3-Column Glass Stat Cards -->
           <div class="grid grid-cols-3 gap-2.5 pt-1">
-            <div class="liquid-pill rounded-2xl p-3 text-center">
-              <span class="text-[10px] uppercase font-bold text-slate-400 block tracking-wider">M-Mandat</span>
-              <span id="stat-m-seats" class="text-lg font-black text-mblue-600 block mt-0.5">3 st</span>
+            <div class="apple-glass-inner p-3 text-center">
+              <span class="text-[10px] uppercase font-semibold text-slate-400 block tracking-wider">M-Mandat</span>
+              <span id="stat-m-seats" class="text-lg font-extrabold text-mblue-600 block mt-0.5 tabular-nums">3 st</span>
               <span class="text-[10px] text-slate-500 block">av 17 mandat</span>
             </div>
-            <div class="liquid-pill rounded-2xl p-3 text-center">
-              <span class="text-[10px] uppercase font-bold text-slate-400 block tracking-wider">Dag 1 Plats</span>
-              <span id="stat-day1" class="text-lg font-black text-amber-600 block mt-0.5">Nej</span>
+            <div class="apple-glass-inner p-3 text-center">
+              <span class="text-[10px] uppercase font-semibold text-slate-400 block tracking-wider">Dag 1 Plats</span>
+              <span id="stat-day1" class="text-lg font-extrabold text-amber-600 block mt-0.5">Nej</span>
               <span id="stat-day1-sub" class="text-[10px] text-slate-500 block truncate">Kräver 4 mandat</span>
             </div>
-            <div class="liquid-pill rounded-2xl p-3 text-center">
-              <span class="text-[10px] uppercase font-bold text-slate-400 block tracking-wider">Position</span>
-              <span id="stat-pos" class="text-lg font-black text-emerald-600 block mt-0.5 truncate">1:e Ers.</span>
+            <div class="apple-glass-inner p-3 text-center">
+              <span class="text-[10px] uppercase font-semibold text-slate-400 block tracking-wider">Position</span>
+              <span id="stat-pos" class="text-lg font-extrabold text-emerald-600 block mt-0.5 truncate">1:e Ers.</span>
               <span id="stat-pos-sub" class="text-[10px] text-slate-500 block truncate">Först i kön</span>
             </div>
           </div>
@@ -256,104 +466,109 @@
       </div>
     </section>
 
-    <!-- PRESET CHIPS / SNABBVAL -->
+    <!-- APPLE SEGMENTED CONTROL: SCENARIOS (Replaces emoji chips) -->
     <section class="space-y-2">
       <div class="flex items-center justify-between px-1">
-        <span class="text-xs font-extrabold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
+        <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
           <i data-lucide="sparkles" class="w-3.5 h-3.5 text-mblue-600"></i> Snabbscenarier
         </span>
-        <div class="flex items-center gap-2">
-          <button onclick="copyShareUrl()" class="px-3 py-1.5 rounded-xl bg-white/90 hover:bg-white text-slate-700 text-xs font-bold flex items-center gap-1.5 transition border border-slate-200 shadow-xs active:scale-95">
-            <i data-lucide="share-2" class="w-3.5 h-3.5 text-mblue-600"></i>
+        <div class="flex items-center gap-1.5">
+          <button onclick="copyShareUrl()" class="apple-glass-pill px-3 py-1.5 rounded-full text-xs font-semibold text-slate-700 hover:text-slate-900 flex items-center gap-1.5 transition active:scale-95" title="Kopiera analyslänk">
+            <i data-lucide="share" class="w-3.5 h-3.5 text-mblue-600"></i>
             <span>Dela</span>
           </button>
-          <button onclick="resetToDefaults()" class="p-1.5 rounded-xl bg-white/90 hover:bg-white text-slate-500 hover:text-slate-700 text-xs transition border border-slate-200 shadow-xs active:scale-95" title="Återställ">
+          <button onclick="resetToDefaults()" class="apple-glass-pill w-8 h-8 rounded-full text-slate-500 hover:text-slate-900 flex items-center justify-center transition active:scale-95" title="Återställ till standardvärden">
             <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
           </button>
         </div>
       </div>
       
-      <div class="flex items-center gap-2.5 overflow-x-auto pb-1.5 no-scrollbar scroll-smooth">
-        <button onclick="applyPreset('valet2022')" class="shrink-0 px-4 py-2 rounded-2xl bg-white/90 hover:bg-white text-slate-700 text-xs font-bold border border-slate-200/80 shadow-xs transition active:scale-95">
-          🗳️ Valet 2022 (M 18.5%, SD 19.8%)
+      <div class="apple-glass-inner p-1.5 flex items-center gap-1 overflow-x-auto no-scrollbar scroll-smooth">
+        <button onclick="applyPreset('valet2022')" id="btn-preset-valet2022" class="apple-seg-btn active">
+          <i data-lucide="archive" class="w-3.5 h-3.5"></i>
+          <span>Valet 2022</span>
         </button>
-        <button onclick="applyPreset('novus2026')" class="shrink-0 px-4 py-2 rounded-2xl bg-white/90 hover:bg-white text-slate-700 text-xs font-bold border border-slate-200/80 shadow-xs transition active:scale-95">
-          📊 Opinionsläget (Novus aug 2026)
+        <button onclick="applyPreset('novus2026')" id="btn-preset-novus2026" class="apple-seg-btn">
+          <i data-lucide="trending-up" class="w-3.5 h-3.5"></i>
+          <span>Opinionsläget (Novus)</span>
         </button>
-        <button onclick="applyPreset('m4seats')" class="shrink-0 px-4 py-2 rounded-2xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-black border border-emerald-300 shadow-xs transition active:scale-95">
-          🎉 M 4 Mandat (M 20.8%)
+        <button onclick="applyPreset('m4seats')" id="btn-preset-m4seats" class="apple-seg-btn">
+          <i data-lucide="award" class="w-3.5 h-3.5 text-emerald-600"></i>
+          <span>M 4 Mandat (20.8%)</span>
         </button>
-        <button onclick="applyPreset('sdduel')" class="shrink-0 px-4 py-2 rounded-2xl bg-amber-50 hover:bg-amber-100 text-amber-800 text-xs font-black border border-amber-300 shadow-xs transition active:scale-95">
-          ⚔️ M vs SD Knivskarp duell
+        <button onclick="applyPreset('sdduel')" id="btn-preset-sdduel" class="apple-seg-btn">
+          <i data-lucide="swords" class="w-3.5 h-3.5 text-amber-600"></i>
+          <span>Duell M vs SD</span>
         </button>
-        <button onclick="applyPreset('lover4')" class="shrink-0 px-4 py-2 rounded-2xl bg-sky-50 hover:bg-sky-100 text-sky-800 text-xs font-bold border border-sky-300 shadow-xs transition active:scale-95">
-          🔹 L över 4% (Mindre mandat till M/SD)
+        <button onclick="applyPreset('lover4')" id="btn-preset-lover4" class="apple-seg-btn">
+          <i data-lucide="shield-alert" class="w-3.5 h-3.5 text-sky-600"></i>
+          <span>L över 4%</span>
         </button>
       </div>
     </section>
 
-    <!-- SLIDERS: Huvudpartier (M, SD, S, L) -->
-    <section class="liquid-glass rounded-[32px] p-5 sm:p-7 space-y-4">
+    <!-- LIQUID SLIDERS: HUVUDPARTIER -->
+    <section class="apple-glass-card p-5 sm:p-7 space-y-4">
       <div class="flex items-center justify-between gap-2">
         <div>
-          <h3 class="text-base sm:text-lg font-black text-slate-900 flex items-center gap-2">
+          <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
             <i data-lucide="sliders" class="w-4 h-4 text-mblue-600"></i>
             Röstetal i Östergötland
           </h3>
-          <p class="text-xs text-slate-500 font-medium">Justera reglagen för att simulera mandatfördelningen</p>
+          <p class="text-xs text-slate-500 font-medium">Finjustera röstetalen för att beräkna mandatutfallet</p>
         </div>
-        <span class="text-xs font-mono font-bold bg-white px-2.5 py-1 rounded-xl text-slate-600 border border-slate-200 shadow-xs shrink-0">
-          Totalt: <span id="total-pct-sum" class="text-slate-900 font-black">100.0%</span>
-        </span>
+        <div class="apple-glass-pill px-3 py-1 rounded-full text-xs font-semibold text-slate-600 shrink-0">
+          Totalt: <span id="total-pct-sum" class="text-slate-900 font-bold tabular-nums">100.0%</span>
+        </div>
       </div>
 
       <!-- Slider 1: Moderaterna (M) -->
-      <div class="bg-white/95 p-3.5 sm:p-4 rounded-2xl border border-mblue-200/80 shadow-xs space-y-2">
+      <div class="apple-glass-inner p-3.5 sm:p-4 space-y-2.5">
         <div class="flex items-center justify-between gap-2">
           <div class="flex items-center gap-2 min-w-0">
-            <span class="w-3.5 h-3.5 rounded-full bg-mblue-600 shrink-0 shadow-xs"></span>
+            <span class="w-3 h-3 rounded-full bg-mblue-600 shrink-0 shadow-xs"></span>
             <div class="flex items-baseline gap-1.5 min-w-0">
-              <span class="font-black text-sm sm:text-base text-slate-900">M</span>
+              <span class="font-bold text-sm sm:text-base text-slate-900">M</span>
               <span class="text-xs text-slate-400 font-medium hidden sm:inline truncate">Moderaterna</span>
             </div>
-            <span id="m-mandates-badge" class="bg-mblue-50 text-mblue-700 text-[10px] sm:text-xs font-extrabold px-2 py-0.5 rounded-full border border-mblue-200 shrink-0 whitespace-nowrap">
+            <span id="m-mandates-badge" class="bg-mblue-50/90 text-mblue-700 text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded-full border border-mblue-200/80 shrink-0 whitespace-nowrap">
               3 mandat
             </span>
           </div>
-          <div class="flex items-center gap-1 shrink-0">
-            <button onclick="adjustParty('m', -0.1)" class="w-7 h-7 rounded-lg bg-slate-100 active:bg-slate-200 text-slate-700 flex items-center justify-center text-xs font-bold transition border border-slate-200">-</button>
-            <span id="val-m" class="font-mono font-black text-mblue-600 text-base min-w-[50px] text-center">18.5%</span>
-            <button onclick="adjustParty('m', 0.1)" class="w-7 h-7 rounded-lg bg-slate-100 active:bg-slate-200 text-slate-700 flex items-center justify-center text-xs font-bold transition border border-slate-200">+</button>
+          <div class="flex items-center gap-1.5 shrink-0">
+            <button onclick="adjustParty('m', -0.1)" class="apple-stepper-btn" aria-label="Minska M">-</button>
+            <span id="val-m" class="font-mono font-bold text-mblue-600 text-base min-w-[52px] text-center tabular-nums">18.5%</span>
+            <button onclick="adjustParty('m', 0.1)" class="apple-stepper-btn" aria-label="Öka M">+</button>
           </div>
         </div>
-        <input type="range" id="slider-m" class="slider-m w-full" min="15.0" max="26.0" step="0.1" value="18.5" oninput="onSliderInput('m', this.value)" />
+        <input type="range" id="slider-m" class="w-full" min="15.0" max="26.0" step="0.1" value="18.5" oninput="onSliderInput('m', this.value)" />
         <div class="flex justify-between text-[10px] sm:text-[11px] text-slate-400 font-medium">
           <span>15.0%</span>
-          <span class="text-mblue-600 font-bold">⚡ 4:e mandatet vid ca 20.3%</span>
+          <span class="text-mblue-600 font-semibold">⚡ 4:e mandatet vid ca 20.3%</span>
           <span>26.0%</span>
         </div>
       </div>
 
       <!-- Slider 2: Sverigedemokraterna (SD) -->
-      <div class="bg-white/95 p-3.5 sm:p-4 rounded-2xl border border-slate-200/80 shadow-xs space-y-2">
+      <div class="apple-glass-inner p-3.5 sm:p-4 space-y-2.5">
         <div class="flex items-center justify-between gap-2">
           <div class="flex items-center gap-2 min-w-0">
-            <span class="w-3.5 h-3.5 rounded-full bg-amber-500 shrink-0 shadow-xs"></span>
+            <span class="w-3 h-3 rounded-full bg-amber-500 shrink-0 shadow-xs"></span>
             <div class="flex items-baseline gap-1.5 min-w-0">
-              <span class="font-black text-sm sm:text-base text-slate-900">SD</span>
+              <span class="font-bold text-sm sm:text-base text-slate-900">SD</span>
               <span class="text-xs text-slate-400 font-medium hidden sm:inline truncate">Sverigedemokraterna</span>
             </div>
-            <span id="sd-mandates-badge" class="bg-amber-50 text-amber-700 text-[10px] sm:text-xs font-extrabold px-2 py-0.5 rounded-full border border-amber-200 shrink-0 whitespace-nowrap">
+            <span id="sd-mandates-badge" class="bg-amber-50/90 text-amber-700 text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded-full border border-amber-200/80 shrink-0 whitespace-nowrap">
               4 mandat
             </span>
           </div>
-          <div class="flex items-center gap-1 shrink-0">
-            <button onclick="adjustParty('sd', -0.1)" class="w-7 h-7 rounded-lg bg-slate-100 active:bg-slate-200 text-slate-700 flex items-center justify-center text-xs font-bold transition border border-slate-200">-</button>
-            <span id="val-sd" class="font-mono font-black text-amber-600 text-base min-w-[50px] text-center">19.8%</span>
-            <button onclick="adjustParty('sd', 0.1)" class="w-7 h-7 rounded-lg bg-slate-100 active:bg-slate-200 text-slate-700 flex items-center justify-center text-xs font-bold transition border border-slate-200">+</button>
+          <div class="flex items-center gap-1.5 shrink-0">
+            <button onclick="adjustParty('sd', -0.1)" class="apple-stepper-btn" aria-label="Minska SD">-</button>
+            <span id="val-sd" class="font-mono font-bold text-amber-600 text-base min-w-[52px] text-center tabular-nums">19.8%</span>
+            <button onclick="adjustParty('sd', 0.1)" class="apple-stepper-btn" aria-label="Öka SD">+</button>
           </div>
         </div>
-        <input type="range" id="slider-sd" class="slider-sd w-full" min="15.0" max="26.0" step="0.1" value="19.8" oninput="onSliderInput('sd', this.value)" />
+        <input type="range" id="slider-sd" class="w-full" min="15.0" max="26.0" step="0.1" value="19.8" oninput="onSliderInput('sd', this.value)" />
         <div class="flex justify-between text-[10px] sm:text-[11px] text-slate-400 font-medium">
           <span>15.0%</span>
           <span>Valet 2022: 19.8%</span>
@@ -362,25 +577,25 @@
       </div>
 
       <!-- Slider 3: Socialdemokraterna (S) -->
-      <div class="bg-white/95 p-3.5 sm:p-4 rounded-2xl border border-slate-200/80 shadow-xs space-y-2">
+      <div class="apple-glass-inner p-3.5 sm:p-4 space-y-2.5">
         <div class="flex items-center justify-between gap-2">
           <div class="flex items-center gap-2 min-w-0">
-            <span class="w-3.5 h-3.5 rounded-full bg-red-600 shrink-0 shadow-xs"></span>
+            <span class="w-3 h-3 rounded-full bg-red-600 shrink-0 shadow-xs"></span>
             <div class="flex items-baseline gap-1.5 min-w-0">
-              <span class="font-black text-sm sm:text-base text-slate-900">S</span>
+              <span class="font-bold text-sm sm:text-base text-slate-900">S</span>
               <span class="text-xs text-slate-400 font-medium hidden sm:inline truncate">Socialdemokraterna</span>
             </div>
-            <span id="s-mandates-badge" class="bg-red-50 text-red-700 text-[10px] sm:text-xs font-extrabold px-2 py-0.5 rounded-full border border-red-200 shrink-0 whitespace-nowrap">
+            <span id="s-mandates-badge" class="bg-red-50/90 text-red-700 text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded-full border border-red-200/80 shrink-0 whitespace-nowrap">
               6 mandat
             </span>
           </div>
-          <div class="flex items-center gap-1 shrink-0">
-            <button onclick="adjustParty('s', -0.1)" class="w-7 h-7 rounded-lg bg-slate-100 active:bg-slate-200 text-slate-700 flex items-center justify-center text-xs font-bold transition border border-slate-200">-</button>
-            <span id="val-s" class="font-mono font-black text-red-600 text-base min-w-[50px] text-center">33.0%</span>
-            <button onclick="adjustParty('s', 0.1)" class="w-7 h-7 rounded-lg bg-slate-100 active:bg-slate-200 text-slate-700 flex items-center justify-center text-xs font-bold transition border border-slate-200">+</button>
+          <div class="flex items-center gap-1.5 shrink-0">
+            <button onclick="adjustParty('s', -0.1)" class="apple-stepper-btn" aria-label="Minska S">-</button>
+            <span id="val-s" class="font-mono font-bold text-red-600 text-base min-w-[52px] text-center tabular-nums">33.0%</span>
+            <button onclick="adjustParty('s', 0.1)" class="apple-stepper-btn" aria-label="Öka S">+</button>
           </div>
         </div>
-        <input type="range" id="slider-s" class="slider-s w-full" min="26.0" max="40.0" step="0.1" value="33.0" oninput="onSliderInput('s', this.value)" />
+        <input type="range" id="slider-s" class="w-full" min="26.0" max="40.0" step="0.1" value="33.0" oninput="onSliderInput('s', this.value)" />
         <div class="flex justify-between text-[10px] sm:text-[11px] text-slate-400 font-medium">
           <span>26.0%</span>
           <span>Valet 2022: 33.0%</span>
@@ -389,28 +604,28 @@
       </div>
 
       <!-- Slider 4: Liberalerna (L) -->
-      <div class="bg-white/95 p-3.5 sm:p-4 rounded-2xl border border-slate-200/80 shadow-xs space-y-2">
+      <div class="apple-glass-inner p-3.5 sm:p-4 space-y-2.5">
         <div class="flex items-center justify-between gap-2">
           <div class="flex items-center gap-2 min-w-0">
-            <span class="w-3.5 h-3.5 rounded-full bg-sky-500 shrink-0 shadow-xs"></span>
+            <span class="w-3 h-3 rounded-full bg-sky-500 shrink-0 shadow-xs"></span>
             <div class="flex items-baseline gap-1.5 min-w-0">
-              <span class="font-black text-sm sm:text-base text-slate-900">L</span>
+              <span class="font-bold text-sm sm:text-base text-slate-900">L</span>
               <span class="text-xs text-slate-400 font-medium hidden sm:inline truncate">Liberalerna</span>
             </div>
-            <span id="l-threshold-badge" class="bg-rose-50 text-rose-700 text-[10px] sm:text-xs font-extrabold px-2 py-0.5 rounded-full border border-rose-200 shrink-0 whitespace-nowrap flex items-center gap-1">
+            <span id="l-threshold-badge" class="bg-rose-50 text-rose-700 text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded-full border border-rose-200 shrink-0 whitespace-nowrap flex items-center gap-1">
               <i data-lucide="alert-triangle" class="w-3 h-3"></i> < 4% Spärr
             </span>
           </div>
-          <div class="flex items-center gap-1 shrink-0">
-            <button onclick="adjustParty('l', -0.1)" class="w-7 h-7 rounded-lg bg-slate-100 active:bg-slate-200 text-slate-700 flex items-center justify-center text-xs font-bold transition border border-slate-200">-</button>
-            <span id="val-l" class="font-mono font-black text-sky-700 text-base min-w-[50px] text-center">1.8%</span>
-            <button onclick="adjustParty('l', 0.1)" class="w-7 h-7 rounded-lg bg-slate-100 active:bg-slate-200 text-slate-700 flex items-center justify-center text-xs font-bold transition border border-slate-200">+</button>
+          <div class="flex items-center gap-1.5 shrink-0">
+            <button onclick="adjustParty('l', -0.1)" class="apple-stepper-btn" aria-label="Minska L">-</button>
+            <span id="val-l" class="font-mono font-bold text-sky-700 text-base min-w-[52px] text-center tabular-nums">1.8%</span>
+            <button onclick="adjustParty('l', 0.1)" class="apple-stepper-btn" aria-label="Öka L">+</button>
           </div>
         </div>
-        <input type="range" id="slider-l" class="slider-l w-full" min="1.0" max="6.0" step="0.1" value="1.8" oninput="onSliderInput('l', this.value)" />
+        <input type="range" id="slider-l" class="w-full" min="1.0" max="6.0" step="0.1" value="1.8" oninput="onSliderInput('l', this.value)" />
         <div class="flex justify-between text-[10px] sm:text-[11px] text-slate-400 font-medium">
           <span>1.0%</span>
-          <span class="text-amber-600 font-bold">⚠️ 4.0% riksdagsspärr</span>
+          <span class="text-amber-600 font-medium">⚠️ 4.0% riksdagsspärr</span>
           <span>6.0%</span>
         </div>
       </div>
@@ -418,30 +633,30 @@
     </section>
 
     <!-- ACCORDION: Avancerade inställningar & övriga partier -->
-    <section class="liquid-glass rounded-[28px] overflow-hidden">
+    <section class="apple-glass-card overflow-hidden">
       <button onclick="toggleAccordion('advanced-settings')" class="w-full p-5 sm:p-6 flex items-center justify-between text-left hover:bg-white/40 transition">
         <div class="flex items-center gap-3">
-          <div class="w-9 h-9 rounded-xl bg-mblue-50 text-mblue-600 flex items-center justify-center border border-mblue-200 shrink-0">
-            <i data-lucide="settings-2" class="w-4 h-4"></i>
+          <div class="w-8 h-8 rounded-full apple-glass-pill text-mblue-600 flex items-center justify-center shrink-0">
+            <i data-lucide="sliders-horizontal" class="w-4 h-4"></i>
           </div>
           <div>
-            <span class="font-black text-sm sm:text-base text-slate-900">Avancerade inställningar & Övriga partier</span>
+            <span class="font-bold text-sm sm:text-base text-slate-900">Övriga partier & Parametrar</span>
             <p class="text-xs text-slate-500 font-medium">Justera V, C, KD, MP och frånvarofrekvens</p>
           </div>
         </div>
         <i id="accordion-icon" data-lucide="chevron-down" class="w-5 h-5 text-slate-400 transition-transform duration-300"></i>
       </button>
 
-      <div id="advanced-settings" class="hidden p-6 pt-0 border-t border-slate-200/70 space-y-4 bg-white/30">
+      <div id="advanced-settings" class="hidden p-6 pt-0 border-t border-slate-200/50 space-y-4">
         
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-4">
           <!-- V -->
-          <div class="bg-white/90 p-4 rounded-2xl border border-slate-200/80 space-y-2 shadow-xs">
+          <div class="apple-glass-inner p-4 space-y-2">
             <div class="flex justify-between items-center text-xs">
               <span class="font-bold text-slate-800 flex items-center gap-2">
                 <span class="w-2.5 h-2.5 rounded-full bg-red-800"></span> Vänsterpartiet (V)
               </span>
-              <span id="val-v" class="font-mono font-bold text-red-700">5.5%</span>
+              <span id="val-v" class="font-mono font-bold text-red-700 tabular-nums">5.5%</span>
             </div>
             <input type="range" id="slider-v" class="w-full h-2" min="3.0" max="9.0" step="0.1" value="5.5" oninput="onSliderInput('v', this.value)" />
             <div class="flex justify-between items-center text-[10px] text-slate-500 font-medium">
@@ -454,12 +669,12 @@
           </div>
 
           <!-- C -->
-          <div class="bg-white/90 p-4 rounded-2xl border border-slate-200/80 space-y-2 shadow-xs">
+          <div class="apple-glass-inner p-4 space-y-2">
             <div class="flex justify-between items-center text-xs">
               <span class="font-bold text-slate-800 flex items-center gap-2">
                 <span class="w-2.5 h-2.5 rounded-full bg-emerald-700"></span> Centerpartiet (C)
               </span>
-              <span id="val-c" class="font-mono font-bold text-emerald-700">4.8%</span>
+              <span id="val-c" class="font-mono font-bold text-emerald-700 tabular-nums">4.8%</span>
             </div>
             <input type="range" id="slider-c" class="w-full h-2" min="2.5" max="8.0" step="0.1" value="4.8" oninput="onSliderInput('c', this.value)" />
             <div class="flex justify-between items-center text-[10px] text-slate-500 font-medium">
@@ -472,12 +687,12 @@
           </div>
 
           <!-- KD -->
-          <div class="bg-white/90 p-4 rounded-2xl border border-slate-200/80 space-y-2 shadow-xs">
+          <div class="apple-glass-inner p-4 space-y-2">
             <div class="flex justify-between items-center text-xs">
               <span class="font-bold text-slate-800 flex items-center gap-2">
                 <span class="w-2.5 h-2.5 rounded-full bg-blue-700"></span> Kristdemokraterna (KD)
               </span>
-              <span id="val-kd" class="font-mono font-bold text-blue-700">5.2%</span>
+              <span id="val-kd" class="font-mono font-bold text-blue-700 tabular-nums">5.2%</span>
             </div>
             <input type="range" id="slider-kd" class="w-full h-2" min="3.0" max="8.5" step="0.1" value="5.2" oninput="onSliderInput('kd', this.value)" />
             <div class="flex justify-between items-center text-[10px] text-slate-500 font-medium">
@@ -490,12 +705,12 @@
           </div>
 
           <!-- MP -->
-          <div class="bg-white/90 p-4 rounded-2xl border border-slate-200/80 space-y-2 shadow-xs">
+          <div class="apple-glass-inner p-4 space-y-2">
             <div class="flex justify-between items-center text-xs">
               <span class="font-bold text-slate-800 flex items-center gap-2">
                 <span class="w-2.5 h-2.5 rounded-full bg-green-600"></span> Miljöpartiet (MP)
               </span>
-              <span id="val-mp" class="font-mono font-bold text-green-700">4.5%</span>
+              <span id="val-mp" class="font-mono font-bold text-green-700 tabular-nums">4.5%</span>
             </div>
             <input type="range" id="slider-mp" class="w-full h-2" min="2.5" max="8.0" step="0.1" value="4.5" oninput="onSliderInput('mp', this.value)" />
             <div class="flex justify-between items-center text-[10px] text-slate-500 font-medium">
@@ -509,16 +724,16 @@
         </div>
 
         <!-- Demografisk Frånvarofrekvens Slider -->
-        <div class="bg-white/95 p-5 rounded-2xl border border-slate-200/80 space-y-2.5 shadow-xs">
+        <div class="apple-glass-inner p-5 space-y-2.5">
           <div class="flex justify-between items-center">
             <div>
-              <span class="font-extrabold text-sm text-slate-900 flex items-center gap-2">
+              <span class="font-bold text-sm text-slate-900 flex items-center gap-2">
                 <i data-lucide="user-check" class="w-4 h-4 text-emerald-600"></i>
                 Frånvarofrekvens (P_frånvaro)
               </span>
               <p class="text-xs text-slate-500 font-medium">Sannolikhet för föräldraledighet/sjukdom/ministeruppdrag under 4 år</p>
             </div>
-            <span id="val-absence" class="font-mono font-black text-emerald-600 text-base">45%</span>
+            <span id="val-absence" class="font-mono font-bold text-emerald-600 text-base tabular-nums">45%</span>
           </div>
           <input type="range" id="slider-absence" class="w-full" min="20" max="70" step="5" value="45" oninput="onAbsenceSliderInput(this.value)" />
           <div class="flex justify-between text-[11px] text-slate-400 font-medium">
@@ -535,21 +750,21 @@
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5">
       
       <!-- Kort 1: Valnatten -->
-      <div class="liquid-glass rounded-[28px] p-5 sm:p-6 flex flex-col justify-between space-y-4 overflow-hidden min-h-[220px]">
+      <div class="apple-glass-card p-5 sm:p-6 flex flex-col justify-between space-y-4 overflow-hidden min-h-[220px]">
         <div class="flex items-center justify-between gap-2">
           <div class="flex items-center gap-1.5 min-w-0">
-            <i data-lucide="calendar-check" class="w-4 h-4 text-mblue-600 shrink-0"></i>
-            <span class="text-xs font-black uppercase tracking-wider text-slate-500 truncate">
+            <i data-lucide="calendar" class="w-4 h-4 text-mblue-600 shrink-0"></i>
+            <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 truncate">
               Valnatten
             </span>
           </div>
-          <span id="card1-tag" class="text-[10px] font-black px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200 shrink-0 whitespace-nowrap">
+          <span id="card1-tag" class="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200/80 shrink-0 whitespace-nowrap">
             Direktmandat
           </span>
         </div>
 
         <div>
-          <h4 id="card1-title" class="text-xl font-black text-slate-900 leading-tight min-h-[1.75rem]">
+          <h4 id="card1-title" class="text-xl font-extrabold text-slate-900 leading-tight min-h-[1.75rem]">
             3 M-mandat säkrade
           </h4>
           <p id="card1-desc" class="text-xs text-slate-600 mt-1.5 leading-relaxed min-h-[2.5rem]">
@@ -557,33 +772,33 @@
           </p>
         </div>
 
-        <div id="card1-footer" class="p-3.5 rounded-2xl bg-white/90 border border-slate-200/80 flex items-center gap-3 shadow-xs min-w-0">
-          <div id="card1-status-icon" class="w-9 h-9 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0 border border-amber-200">
+        <div id="card1-footer" class="apple-glass-inner p-3 flex items-center gap-3 min-w-0">
+          <div id="card1-status-icon" class="w-8 h-8 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center shrink-0 border border-amber-200/60">
             <i data-lucide="clock" class="w-4 h-4"></i>
           </div>
           <div class="text-xs min-w-0 flex-1">
-            <span class="font-extrabold text-slate-900 block truncate">Dag 1 tjänstgöring:</span>
+            <span class="font-bold text-slate-900 block truncate">Dag 1 tjänstgöring:</span>
             <span id="card1-status-sub" class="text-slate-500 font-medium truncate block">Aktiveras vid 4 mandat</span>
           </div>
         </div>
       </div>
 
       <!-- Kort 2: Mandatperioden -->
-      <div class="liquid-glass rounded-[28px] p-5 sm:p-6 flex flex-col justify-between space-y-4 overflow-hidden min-h-[220px]">
+      <div class="apple-glass-card p-5 sm:p-6 flex flex-col justify-between space-y-4 overflow-hidden min-h-[220px]">
         <div class="flex items-center justify-between gap-2">
           <div class="flex items-center gap-1.5 min-w-0">
             <i data-lucide="award" class="w-4 h-4 text-emerald-600 shrink-0"></i>
-            <span class="text-xs font-black uppercase tracking-wider text-slate-500 truncate">
+            <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 truncate">
               Mandatperioden
             </span>
           </div>
-          <span id="card2-tag" class="text-[10px] font-black px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 shrink-0 whitespace-nowrap">
+          <span id="card2-tag" class="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/80 shrink-0 whitespace-nowrap">
             1:e Ersättare
           </span>
         </div>
 
         <div>
-          <h4 id="card2-title" class="text-xl font-black text-emerald-700 leading-tight min-h-[1.75rem]">
+          <h4 id="card2-title" class="text-xl font-extrabold text-emerald-800 leading-tight min-h-[1.75rem]">
             1:e Ersättare (45% chans)
           </h4>
           <p id="card2-desc" class="text-xs text-slate-600 mt-1.5 leading-relaxed min-h-[2.5rem]">
@@ -591,33 +806,33 @@
           </p>
         </div>
 
-        <div class="p-3.5 rounded-2xl bg-white/90 border border-slate-200/80 flex items-center gap-3 shadow-xs min-w-0">
-          <div class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 border border-emerald-200">
-            <i data-lucide="user-plus" class="w-4 h-4"></i>
+        <div class="apple-glass-inner p-3 flex items-center gap-3 min-w-0">
+          <div class="w-8 h-8 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 border border-emerald-200/60">
+            <i data-lucide="user-check" class="w-4 h-4"></i>
           </div>
           <div class="text-xs min-w-0 flex-1">
-            <span class="font-extrabold text-slate-900 block truncate">Inhoppschans:</span>
+            <span class="font-bold text-slate-900 block truncate">Inhoppschans:</span>
             <span id="card2-prob-text" class="text-slate-500 font-medium truncate block">Mycket hög under 4 år</span>
           </div>
         </div>
       </div>
 
       <!-- Kort 3: SD-Duellen -->
-      <div class="liquid-glass rounded-[28px] p-5 sm:p-6 flex flex-col justify-between space-y-4 overflow-hidden min-h-[220px]">
+      <div class="apple-glass-card p-5 sm:p-6 flex flex-col justify-between space-y-4 overflow-hidden min-h-[220px]">
         <div class="flex items-center justify-between gap-2">
           <div class="flex items-center gap-1.5 min-w-0">
             <i data-lucide="swords" class="w-4 h-4 text-amber-600 shrink-0"></i>
-            <span class="text-xs font-black uppercase tracking-wider text-slate-500 truncate">
+            <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 truncate">
               SD-Duellen
             </span>
           </div>
-          <span id="duel-status-tag" class="text-[10px] font-black px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200 shrink-0 whitespace-nowrap">
+          <span id="duel-status-tag" class="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200/80 shrink-0 whitespace-nowrap">
             Jämn kamp
           </span>
         </div>
 
         <div>
-          <h4 id="duel-title" class="text-xl font-black text-slate-900 leading-tight min-h-[1.75rem]">
+          <h4 id="duel-title" class="text-xl font-extrabold text-slate-900 leading-tight min-h-[1.75rem]">
             M jagar SD (-0.4%)
           </h4>
           <p id="duel-desc" class="text-xs text-slate-600 mt-1.5 leading-relaxed min-h-[2.5rem]">
@@ -625,13 +840,13 @@
           </p>
         </div>
 
-        <!-- Duel Progress bar -->
+        <!-- Duel Progress bar (iOS Capsule Style) -->
         <div class="space-y-2">
-          <div class="flex justify-between text-xs font-mono font-black">
-            <span class="text-mblue-600">M: <span id="duel-m-quot">7 928</span></span>
-            <span class="text-amber-600">SD: <span id="duel-sd-quot">8 485</span></span>
+          <div class="flex justify-between text-xs font-mono font-bold">
+            <span class="text-mblue-600">M: <span id="duel-m-quot" class="tabular-nums">7 928</span></span>
+            <span class="text-amber-600">SD: <span id="duel-sd-quot" class="tabular-nums">8 485</span></span>
           </div>
-          <div class="w-full h-3 bg-slate-200 rounded-full overflow-hidden flex border border-slate-300/40">
+          <div class="w-full h-2.5 bg-slate-200/60 rounded-full overflow-hidden flex border border-white/60 shadow-inner">
             <div id="duel-m-bar" class="bg-mblue-600 h-full transition-all duration-300" style="width: 48%;"></div>
             <div id="duel-sd-bar" class="bg-amber-500 h-full transition-all duration-300" style="width: 52%;"></div>
           </div>
@@ -644,122 +859,122 @@
     </div>
 
     <!-- M:s KANDIDATLISTA & ERSÄTTARKEDJA -->
-    <section class="liquid-glass rounded-[32px] p-6 sm:p-7 space-y-4">
+    <section class="apple-glass-card p-6 sm:p-7 space-y-4">
       <div class="flex items-center justify-between">
         <div>
-          <h3 class="text-base sm:text-lg font-black text-slate-900 flex items-center gap-2">
+          <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
             <i data-lucide="list-ordered" class="w-4 h-4 text-mblue-600"></i>
             Moderaternas Riksdagslista (Östergötland)
           </h3>
           <p class="text-xs text-slate-500 font-medium">Konstitutionell ersättarkedja vid aktuellt valresultat</p>
         </div>
-        <span class="text-xs text-mblue-700 font-black bg-mblue-50 px-3 py-1 rounded-xl border border-mblue-200">
+        <span class="text-xs text-mblue-700 font-bold apple-glass-pill px-3 py-1 rounded-full">
           5 kandidater
         </span>
       </div>
 
-      <div class="space-y-3" id="candidate-list">
+      <div class="space-y-2.5" id="candidate-list">
         <!-- Candidate 1: Andreas Norlén -->
-        <div id="cand-1" class="p-4 rounded-2xl bg-white/90 border border-slate-200/80 flex items-center justify-between gap-3 shadow-xs min-h-[74px]">
+        <div id="cand-1" class="apple-glass-inner p-3.5 sm:p-4 flex items-center justify-between gap-3 min-h-[70px]">
           <div class="flex items-center gap-3.5">
-            <div class="w-9 h-9 rounded-xl bg-slate-100 text-slate-600 font-extrabold flex items-center justify-center text-xs shrink-0 border border-slate-200">
+            <div class="w-8 h-8 rounded-full apple-glass-pill text-slate-700 font-bold flex items-center justify-center text-xs shrink-0">
               #1
             </div>
             <div>
               <div class="flex items-center gap-2 flex-wrap">
-                <span class="font-black text-sm sm:text-base text-slate-900">Andreas Norlén</span>
-                <span id="cand-1-badge" class="bg-purple-50 text-purple-700 text-[10px] font-black px-2 py-0.5 rounded-md border border-purple-200">Talman</span>
+                <span class="font-bold text-sm sm:text-base text-slate-900">Andreas Norlén</span>
+                <span id="cand-1-badge" class="bg-purple-50 text-purple-700 text-[10px] font-bold px-2 py-0.5 rounded-full border border-purple-200/70">Talman</span>
               </div>
               <span id="cand-1-role" class="text-xs text-slate-500 font-medium">Tilldelas mandat 1 (Avstår ordinarie riksdagsarbete)</span>
             </div>
           </div>
-          <span class="text-xs font-bold text-purple-700 shrink-0">Talmanspost</span>
+          <span class="text-xs font-semibold text-purple-700 shrink-0">Talmanspost</span>
         </div>
 
         <!-- Candidate 2: Matilda Ekeblad -->
-        <div id="cand-2" class="p-4 rounded-2xl bg-white/90 border border-slate-200/80 flex items-center justify-between gap-3 shadow-xs min-h-[74px]">
+        <div id="cand-2" class="apple-glass-inner p-3.5 sm:p-4 flex items-center justify-between gap-3 min-h-[70px]">
           <div class="flex items-center gap-3.5">
-            <div class="w-9 h-9 rounded-xl bg-mblue-50 text-mblue-700 font-extrabold flex items-center justify-center text-xs shrink-0 border border-mblue-200">
+            <div class="w-8 h-8 rounded-full apple-glass-pill text-mblue-700 font-bold flex items-center justify-center text-xs shrink-0">
               #2
             </div>
             <div>
               <div class="flex items-center gap-2 flex-wrap">
-                <span class="font-black text-sm sm:text-base text-slate-900">Matilda Ekeblad</span>
-                <span id="cand-2-badge" class="bg-mblue-50 text-mblue-700 text-[10px] font-black px-2 py-0.5 rounded-md border border-mblue-200">Ledamot</span>
+                <span class="font-bold text-sm sm:text-base text-slate-900">Matilda Ekeblad</span>
+                <span id="cand-2-badge" class="bg-mblue-50 text-mblue-700 text-[10px] font-bold px-2 py-0.5 rounded-full border border-mblue-200/70">Ledamot</span>
               </div>
               <span id="cand-2-role" class="text-xs text-slate-500 font-medium">Tjänstgörande riksdagsledamot (Mandat 1)</span>
             </div>
           </div>
-          <span class="text-xs font-bold text-emerald-700 shrink-0">Ordinarie</span>
+          <span class="text-xs font-semibold text-emerald-700 shrink-0">Ordinarie</span>
         </div>
 
         <!-- Candidate 3: John Weinerhall -->
-        <div id="cand-3" class="p-4 rounded-2xl bg-white/90 border border-slate-200/80 flex items-center justify-between gap-3 shadow-xs min-h-[74px]">
+        <div id="cand-3" class="apple-glass-inner p-3.5 sm:p-4 flex items-center justify-between gap-3 min-h-[70px]">
           <div class="flex items-center gap-3.5">
-            <div class="w-9 h-9 rounded-xl bg-mblue-50 text-mblue-700 font-extrabold flex items-center justify-center text-xs shrink-0 border border-mblue-200">
+            <div class="w-8 h-8 rounded-full apple-glass-pill text-mblue-700 font-bold flex items-center justify-center text-xs shrink-0">
               #3
             </div>
             <div>
               <div class="flex items-center gap-2 flex-wrap">
-                <span class="font-black text-sm sm:text-base text-slate-900">John Weinerhall</span>
-                <span id="cand-3-badge" class="bg-mblue-50 text-mblue-700 text-[10px] font-black px-2 py-0.5 rounded-md border border-mblue-200">Ledamot</span>
+                <span class="font-bold text-sm sm:text-base text-slate-900">John Weinerhall</span>
+                <span id="cand-3-badge" class="bg-mblue-50 text-mblue-700 text-[10px] font-bold px-2 py-0.5 rounded-full border border-mblue-200/70">Ledamot</span>
               </div>
               <span id="cand-3-role" class="text-xs text-slate-500 font-medium">Tjänstgörande riksdagsledamot (Mandat 2)</span>
             </div>
           </div>
-          <span class="text-xs font-bold text-emerald-700 shrink-0">Ordinarie</span>
+          <span class="text-xs font-semibold text-emerald-700 shrink-0">Ordinarie</span>
         </div>
 
         <!-- Candidate 4: Magdalena Hermelin -->
-        <div id="cand-4" class="p-4 rounded-2xl bg-white/90 border border-slate-200/80 flex items-center justify-between gap-3 shadow-xs min-h-[74px]">
+        <div id="cand-4" class="apple-glass-inner p-3.5 sm:p-4 flex items-center justify-between gap-3 min-h-[70px]">
           <div class="flex items-center gap-3.5">
-            <div class="w-9 h-9 rounded-xl bg-mblue-50 text-mblue-700 font-extrabold flex items-center justify-center text-xs shrink-0 border border-mblue-200">
+            <div class="w-8 h-8 rounded-full apple-glass-pill text-mblue-700 font-bold flex items-center justify-center text-xs shrink-0">
               #4
             </div>
             <div>
               <div class="flex items-center gap-2 flex-wrap">
-                <span class="font-black text-sm sm:text-base text-slate-900">Magdalena Hermelin</span>
-                <span id="cand-4-badge" class="bg-emerald-50 text-emerald-700 text-[10px] font-black px-2 py-0.5 rounded-md border border-emerald-200">Talmansersättare</span>
+                <span class="font-bold text-sm sm:text-base text-slate-900">Magdalena Hermelin</span>
+                <span id="cand-4-badge" class="bg-emerald-50 text-emerald-700 text-[10px] font-bold px-2 py-0.5 rounded-full border border-emerald-200/70">Talmansersättare</span>
               </div>
               <span id="cand-4-role" class="text-xs text-slate-500 font-medium">Tjänstgörande ledamot (träder in för Andreas Norlén)</span>
             </div>
           </div>
-          <span id="cand-4-status-tag" class="text-xs font-bold text-emerald-700 shrink-0">Tjänstgör</span>
+          <span id="cand-4-status-tag" class="text-xs font-semibold text-emerald-700 shrink-0">Tjänstgör</span>
         </div>
 
-        <!-- Candidate 5: Emil Steen (HERO HIGHLIGHT) -->
-        <div id="cand-5" class="p-5 rounded-2xl bg-gradient-to-r from-blue-50/90 via-white to-sky-50/90 border-2 border-mblue-500/70 flex items-center justify-between gap-3 shadow-md shadow-mblue-500/10 min-h-[90px]">
+        <!-- Candidate 5: Emil Steen (VISIONOS SPECULAR HIGHLIGHT) -->
+        <div id="cand-5" class="apple-hero-specular p-4 sm:p-5 flex items-center justify-between gap-3 min-h-[85px]">
           <div class="flex items-center gap-3.5">
-            <div class="w-10 h-10 rounded-2xl bg-mblue-600 text-white font-black flex items-center justify-center text-sm shrink-0 shadow-sm">
+            <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-mblue-700 to-mblue-500 text-white font-bold flex items-center justify-center text-sm shrink-0 shadow-md shadow-mblue-600/30">
               #5
             </div>
             <div>
               <div class="flex items-center gap-2 flex-wrap">
-                <span class="font-black text-base sm:text-lg text-slate-900">Emil Steen</span>
-                <span id="cand-5-badge" class="bg-mblue-600 text-white text-[11px] font-black px-2.5 py-0.5 rounded-md">1:e Ersättare</span>
+                <span class="font-extrabold text-base sm:text-lg text-slate-900">Emil Steen</span>
+                <span id="cand-5-badge" class="bg-mblue-600 text-white text-[11px] font-bold px-2.5 py-0.5 rounded-full shadow-xs">1:e Ersättare</span>
               </div>
-              <span id="cand-5-role" class="text-xs sm:text-sm text-mblue-900 font-bold">Träder in vid frånvaro bland M:s 3 ledamöter</span>
+              <span id="cand-5-role" class="text-xs sm:text-sm text-mblue-900 font-semibold">Träder in vid frånvaro bland M:s 3 ledamöter</span>
             </div>
           </div>
           <div class="text-right shrink-0">
-            <span id="cand-5-prob" class="text-lg font-black text-mblue-600 block font-mono">45.0%</span>
-            <span class="text-[10px] text-slate-500 font-bold">Chans till inhopp</span>
+            <span id="cand-5-prob" class="text-lg sm:text-xl font-black text-mblue-700 block font-mono tabular-nums">45.0%</span>
+            <span class="text-[10px] text-slate-500 font-semibold">Chans till inhopp</span>
           </div>
         </div>
       </div>
     </section>
 
     <!-- ÖSTERGÖTLANDS 17 MANDAT: FÖRDELNING & ÖVERSIKT -->
-    <section class="liquid-glass rounded-[32px] p-6 sm:p-7 space-y-4">
+    <section class="apple-glass-card p-6 sm:p-7 space-y-4">
       <div class="flex items-center justify-between">
         <div>
-          <h3 class="text-base sm:text-lg font-black text-slate-900 flex items-center gap-2">
+          <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
             <i data-lucide="layout-grid" class="w-4 h-4 text-mblue-600"></i>
             Östergötlands 17 Riksdagsmandat
           </h3>
           <p class="text-xs text-slate-500 font-medium">14 fasta valkretsmandat + 3 utjämningsmandat</p>
         </div>
-        <span class="text-xs font-mono font-bold text-slate-700 bg-white px-3 py-1.5 rounded-xl border border-slate-200 shadow-xs">
+        <span class="text-xs font-semibold text-slate-600 apple-glass-pill px-3 py-1 rounded-full">
           Sainte-Laguë (1.2, 3, 5...)
         </span>
       </div>
@@ -770,14 +985,14 @@
       </div>
 
       <!-- Party Summary Bar -->
-      <div class="bg-white/90 rounded-2xl p-4 sm:p-5 border border-slate-200/80 space-y-3 shadow-xs">
-        <div class="flex justify-between items-center text-xs font-extrabold text-slate-700">
+      <div class="apple-glass-inner p-4 sm:p-5 space-y-3">
+        <div class="flex justify-between items-center text-xs font-bold text-slate-700">
           <span>Mandatfördelning</span>
           <span id="total-seats-count" class="text-mblue-600">17 av 17 mandat fördelade</span>
         </div>
 
-        <!-- Proportional bar -->
-        <div class="w-full h-4 rounded-xl overflow-hidden flex shadow-inner bg-slate-100 border border-slate-200" id="mandate-bar">
+        <!-- Proportional bar (Apple rounded capsule) -->
+        <div class="w-full h-3.5 rounded-full overflow-hidden flex shadow-inner bg-slate-200/50 border border-white/60" id="mandate-bar">
           <!-- Dynamically populated party bars -->
         </div>
 
@@ -789,8 +1004,8 @@
     </section>
 
     <!-- METODIK & SAMMANFATTNING -->
-    <section class="liquid-glass rounded-[28px] p-5 sm:p-6 text-xs text-slate-600 space-y-2.5 leading-relaxed">
-      <h4 class="text-sm font-extrabold text-slate-900 flex items-center gap-2">
+    <section class="apple-glass-card p-5 sm:p-6 text-xs text-slate-600 space-y-2.5 leading-relaxed">
+      <h4 class="text-sm font-bold text-slate-900 flex items-center gap-2">
         <i data-lucide="info" class="w-4 h-4 text-mblue-600"></i>
         Om beräkningsmodellen & vallagen
       </h4>
@@ -798,7 +1013,7 @@
         <strong>Jämkade uddatalsmetoden (Sainte-Laguë):</strong> Mandaten fördelas genom att partiernas röstetal divideras med 1,2 för första mandatet och därefter med uddatalen 3, 5, 7, 9 osv.
       </p>
       <p>
-        <strong>Opinionsdata & datering:</strong> Standardvärden och opinionsläget baseras på senaste sammanvägda väljarbarometern från Novus/SCB (augusti 2026), viktat mot Östergötlands historiska valkretsutfall.
+        <strong>Opinionsdata & datering:</strong> Standardvärden och opinionsläget baseras på sammanvägda väljarbarometrar från Novus/SCB (augusti 2026), viktat mot Östergötlands historiska valkretsutfall.
       </p>
       <p>
         <strong>4,0 %-spärren:</strong> Partier under 4,0 % nationellt tilldelas inga mandat och deras röster nollställs vid mandatfördelningen. Detta gynnar direkt de större partierna (M, SD, S) i kampen om de sista mandaten.
@@ -810,9 +1025,9 @@
 
   </main>
 
-  <!-- Clean Footer -->
-  <footer class="max-w-3xl mx-auto px-4 mt-8 text-center text-xs text-slate-500 space-y-1">
-    <p class="font-bold text-slate-700">Riksdagsvalet 2026 • Östergötlands läns valkrets</p>
+  <!-- Clean Minimal Footer -->
+  <footer class="max-w-3xl mx-auto px-4 mt-8 text-center text-xs text-slate-400 space-y-1">
+    <p class="font-semibold text-slate-600">Riksdagsvalet 2026 • Östergötlands läns valkrets</p>
     <p>Framtagen för Emil Steen (#5 Moderaterna Östergötland)</p>
   </footer>
 
@@ -851,6 +1066,7 @@
     const TOTAL_SEATS = 17;
     const TOTAL_VOTES_EST = 300000;
     let hasTriggeredCelebration = false;
+    let currentPreset = 'valet2022';
 
     window.addEventListener('DOMContentLoaded', () => {
       loadStateFromUrl();
@@ -870,8 +1086,23 @@
       }
     }
 
+    function setActivePresetButton(presetKey) {
+      currentPreset = presetKey;
+      const presetButtons = ['valet2022', 'novus2026', 'm4seats', 'sdduel', 'lover4'];
+      presetButtons.forEach(key => {
+        const btn = document.getElementById(`btn-preset-${key}`);
+        if (btn) {
+          if (key === presetKey) {
+            btn.classList.add('active');
+          } else {
+            btn.classList.remove('active');
+          }
+        }
+      });
+    }
+
     function applyPreset(presetKey) {
-      let toastMsg = 'Scenariot laddat!';
+      let toastMsg = 'Scenariot laddat';
       if (presetKey === 'valet2022') {
         state.m = 18.5;
         state.sd = 19.8;
@@ -883,7 +1114,7 @@
         state.mp = 4.5;
         state.norlen = true;
         state.absence = 45;
-        toastMsg = 'Valresultatet 2022 laddat!';
+        toastMsg = 'Valresultatet 2022 laddat';
       } else if (presetKey === 'novus2026') {
         state.m = 19.2;
         state.sd = 20.4;
@@ -895,7 +1126,7 @@
         state.mp = 4.8;
         state.norlen = true;
         state.absence = 45;
-        toastMsg = 'Opinionsläget (Novus augusti 2026) laddat!';
+        toastMsg = 'Opinionsläget (Novus augusti 2026) laddat';
       } else if (presetKey === 'm4seats') {
         state.m = 20.8;
         state.sd = 19.2;
@@ -907,7 +1138,7 @@
         state.mp = 4.5;
         state.norlen = true;
         state.absence = 45;
-        toastMsg = 'Scenariot M 4 mandat laddat!';
+        toastMsg = 'Scenariot M 4 mandat laddat';
         triggerCelebration();
       } else if (presetKey === 'sdduel') {
         state.m = 20.2;
@@ -920,7 +1151,7 @@
         state.mp = 4.5;
         state.norlen = true;
         state.absence = 45;
-        toastMsg = 'Duellscenariot M vs SD laddat!';
+        toastMsg = 'Duellscenariot M vs SD laddat';
       } else if (presetKey === 'lover4') {
         state.m = 18.5;
         state.sd = 19.5;
@@ -932,9 +1163,10 @@
         state.mp = 4.5;
         state.norlen = true;
         state.absence = 45;
-        toastMsg = 'Scenariot L över 4% laddat!';
+        toastMsg = 'Scenariot L över 4% laddat';
       }
 
+      setActivePresetButton(presetKey);
       syncInputsWithState();
       updateCalculations();
       showToast(toastMsg);
@@ -942,29 +1174,55 @@
 
     function resetToDefaults() {
       state = { ...DEFAULTS };
+      setActivePresetButton('valet2022');
       syncInputsWithState();
       updateCalculations();
-      showToast('Återställt till standardvärden!');
+      showToast('Återställt till standardvärden');
     }
 
     function syncInputsWithState() {
       ['m', 'sd', 's', 'l', 'v', 'c', 'kd', 'mp'].forEach(p => {
         const slider = document.getElementById(`slider-${p}`);
-        if (slider) slider.value = state[p];
+        if (slider) {
+          slider.value = state[p];
+          updateSliderTrack(slider, p);
+        }
         const valEl = document.getElementById(`val-${p}`);
         if (valEl) valEl.innerText = state[p].toFixed(1) + '%';
       });
 
       const absenceEl = document.getElementById('slider-absence');
-      if (absenceEl) absenceEl.value = state.absence;
+      if (absenceEl) {
+        absenceEl.value = state.absence;
+        updateAbsenceTrack(absenceEl);
+      }
       const absValEl = document.getElementById('val-absence');
       if (absValEl) absValEl.innerText = state.absence + '%';
+    }
+
+    function updateSliderTrack(slider, party) {
+      const min = parseFloat(slider.min) || 0;
+      const max = parseFloat(slider.max) || 100;
+      const val = parseFloat(slider.value) || 0;
+      const pct = Math.max(0, Math.min(100, ((val - min) / (max - min)) * 100));
+      const color = (PARTIES[party] && PARTIES[party].color) || '#005ea2';
+      slider.style.background = `linear-gradient(to right, ${color} 0%, ${color} ${pct}%, rgba(0, 30, 60, 0.09) ${pct}%, rgba(0, 30, 60, 0.09) 100%)`;
+    }
+
+    function updateAbsenceTrack(slider) {
+      const min = parseFloat(slider.min) || 20;
+      const max = parseFloat(slider.max) || 70;
+      const val = parseFloat(slider.value) || 45;
+      const pct = Math.max(0, Math.min(100, ((val - min) / (max - min)) * 100));
+      slider.style.background = `linear-gradient(to right, #059669 0%, #059669 ${pct}%, rgba(0, 30, 60, 0.09) ${pct}%, rgba(0, 30, 60, 0.09) 100%)`;
     }
 
     function onSliderInput(party, val) {
       state[party] = parseFloat(val);
       const valEl = document.getElementById(`val-${party}`);
       if (valEl) valEl.innerText = state[party].toFixed(1) + '%';
+      const slider = document.getElementById(`slider-${party}`);
+      if (slider) updateSliderTrack(slider, party);
       updateCalculations();
     }
 
@@ -973,7 +1231,10 @@
       let next = Math.max(0, Math.min(50, Math.round((cur + delta) * 10) / 10));
       state[party] = next;
       const slider = document.getElementById(`slider-${party}`);
-      if (slider) slider.value = next;
+      if (slider) {
+        slider.value = next;
+        updateSliderTrack(slider, party);
+      }
       const valEl = document.getElementById(`val-${party}`);
       if (valEl) valEl.innerText = next.toFixed(1) + '%';
       updateCalculations();
@@ -982,6 +1243,8 @@
     function onAbsenceSliderInput(val) {
       state.absence = parseInt(val, 10);
       document.getElementById('val-absence').innerText = state.absence + '%';
+      const slider = document.getElementById('slider-absence');
+      if (slider) updateAbsenceTrack(slider);
       updateCalculations();
     }
 
@@ -1001,10 +1264,10 @@
           const lBadge = document.getElementById('l-threshold-badge');
           if (lBadge) {
             if (passesSparr) {
-              lBadge.className = 'bg-emerald-50 text-emerald-700 text-[10px] sm:text-xs font-extrabold px-2 py-0.5 rounded-full border border-emerald-200 shrink-0 whitespace-nowrap flex items-center gap-1';
+              lBadge.className = 'bg-emerald-50 text-emerald-700 text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded-full border border-emerald-200/80 shrink-0 whitespace-nowrap flex items-center gap-1';
               lBadge.innerHTML = '<i data-lucide="check" class="w-3 h-3"></i> ≥ 4% Spärr';
             } else {
-              lBadge.className = 'bg-rose-50 text-rose-700 text-[10px] sm:text-xs font-extrabold px-2 py-0.5 rounded-full border border-rose-200 shrink-0 whitespace-nowrap flex items-center gap-1';
+              lBadge.className = 'bg-rose-50 text-rose-700 text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded-full border border-rose-200/80 shrink-0 whitespace-nowrap flex items-center gap-1';
               lBadge.innerHTML = '<i data-lucide="alert-triangle" class="w-3 h-3"></i> < 4% Spärr';
             }
           }
@@ -1076,7 +1339,7 @@
           statusHeadline = 'Emil tar plats i riksdagen!';
           statusDesc = `Med ${mSeats} mandat för M och Andreas Norlén som talman tar Magdalena Hermelin och Emil Steen plats som tjänstgörande ledamöter direkt från riksdagens öppnande.`;
           statusBadgeText = '100% Säkrad Plats (Dag 1)';
-          statusBadgeClass = 'bg-emerald-50 text-emerald-800 border-emerald-200';
+          statusBadgeClass = 'bg-emerald-50 text-emerald-800 border-emerald-200/80';
           statusIconName = 'check-circle-2';
         } else if (mSeats === 3) {
           totalProbability = pAbsence;
@@ -1085,7 +1348,7 @@
           statusHeadline = 'Emil är 1:e aktive ersättare';
           statusDesc = `Med 3 mandat för M och Andreas Norlén som talman kliver Magdalena Hermelin (#4) in som ledamot. Emil Steen (#5) blir 1:e ersättare och kliver in vid föräldraledighet, sjukdom eller statssekreteraruppdrag.`;
           statusBadgeText = 'Mycket goda utsikter (1:e ersättare)';
-          statusBadgeClass = 'bg-sky-50 text-mblue-800 border-mblue-200';
+          statusBadgeClass = 'bg-sky-50 text-mblue-800 border-mblue-200/80';
           statusIconName = 'user-check';
         } else if (mSeats === 2) {
           totalProbability = pDoubleAbsence;
@@ -1094,7 +1357,7 @@
           statusHeadline = 'Emil är 2:e ersättare';
           statusDesc = `Med 2 M-mandat träder John Weinerhall in för Andreas Norlén. Magdalena Hermelin är 1:e ersättare och Emil Steen blir 2:e ersättare.`;
           statusBadgeText = '2:e Ersättare (Begränsad chans)';
-          statusBadgeClass = 'bg-amber-50 text-amber-800 border-amber-200';
+          statusBadgeClass = 'bg-amber-50 text-amber-800 border-amber-200/80';
           statusIconName = 'clock';
         } else {
           totalProbability = 1.0;
@@ -1103,34 +1366,8 @@
           statusHeadline = 'Emil är 4:e ersättare';
           statusDesc = 'M når endast 1 mandat. Emil är långt bak i ersättarkedjan.';
           statusBadgeText = 'Låg sannolikhet';
-          statusBadgeClass = 'bg-rose-50 text-rose-800 border-rose-200';
+          statusBadgeClass = 'bg-rose-50 text-rose-800 border-rose-200/80';
           statusIconName = 'alert-circle';
-        }
-      } else {
-        if (mSeats >= 5) {
-          totalProbability = 100.0;
-          emilRole = 'Tjänstgörande riksdagsledamot (Direktmandat)';
-          emilBadge = 'Ordinarie';
-          statusHeadline = 'Emil är ordinarie ledamot!';
-          statusDesc = 'Med 5 M-mandat tar Emil plats direkt på eget mandat.';
-          statusBadgeText = '100% Direktmandat';
-          statusBadgeClass = 'bg-emerald-50 text-emerald-800 border-emerald-200';
-        } else if (mSeats === 4) {
-          totalProbability = pAbsence;
-          emilRole = '1:e Aktive Ersättare';
-          emilBadge = '1:e Ersättare';
-          statusHeadline = 'Emil är 1:e ersättare';
-          statusDesc = 'M tar 4 mandat. Eftersom Norlén ej avstår är Hermelin ordinarie och Emil blir 1:e ersättare.';
-          statusBadgeText = '1:e Ersättare (45% chans)';
-          statusBadgeClass = 'bg-sky-50 text-mblue-800 border-mblue-200';
-        } else {
-          totalProbability = pDoubleAbsence;
-          emilRole = '2:e Ersättare';
-          emilBadge = '2:e Ersättare';
-          statusHeadline = 'Emil är 2:e ersättare';
-          statusDesc = 'M tar 3 mandat och Norlén tjänstgör. Emil är 2:e ersättare.';
-          statusBadgeText = '2:e Ersättare';
-          statusBadgeClass = 'bg-amber-50 text-amber-800 border-amber-200';
         }
       }
 
@@ -1148,12 +1385,12 @@
       document.getElementById('main-headline').innerText = statusHeadline;
 
       const badgeEl = document.getElementById('status-badge');
-      badgeEl.className = `inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-extrabold tracking-wide border transition-all ${statusBadgeClass}`;
+      badgeEl.className = `inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold tracking-wide border transition-all ${statusBadgeClass}`;
       document.getElementById('status-text').innerText = statusBadgeText;
 
       document.getElementById('stat-m-seats').innerText = `${mSeats} st`;
-      document.getElementById('stat-day1').innerText = (mSeats >= (state.norlen ? 4 : 5)) ? 'JA' : 'Nej';
-      document.getElementById('stat-day1').className = (mSeats >= (state.norlen ? 4 : 5)) ? 'text-lg font-black text-emerald-600 block mt-0.5' : 'text-lg font-black text-amber-600 block mt-0.5';
+      document.getElementById('stat-day1').innerText = (mSeats >= 4) ? 'JA' : 'Nej';
+      document.getElementById('stat-day1').className = (mSeats >= 4) ? 'text-lg font-extrabold text-emerald-600 block mt-0.5' : 'text-lg font-extrabold text-amber-600 block mt-0.5';
       document.getElementById('stat-pos').innerText = emilBadge;
 
       for (let p in PARTIES) {
@@ -1168,6 +1405,9 @@
       updateResultCards(mSeats, totalProbability, pAbsence);
       updateCandidateList(mSeats);
       updateMandateOverview(allocatedSeats, partyMandates);
+
+      // Re-create lucide icons for updated elements
+      lucide.createIcons();
 
       syncUrlHash();
     }
@@ -1187,20 +1427,20 @@
 
       if (prob >= 90) {
         stop1.setAttribute('stop-color', '#059669');
-        stop2.setAttribute('stop-color', '#10b981');
-        if (dot) dot.className = 'inline-block w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse';
+        stop2.setAttribute('stop-color', '#34d399');
+        if (dot) dot.className = 'inline-block w-2 h-2 rounded-full bg-emerald-500 shadow-sm shadow-emerald-500/50 animate-pulse';
       } else if (prob >= 40) {
         stop1.setAttribute('stop-color', '#005ea2');
-        stop2.setAttribute('stop-color', '#0284c7');
-        if (dot) dot.className = 'inline-block w-2.5 h-2.5 rounded-full bg-mblue-600 animate-pulse';
+        stop2.setAttribute('stop-color', '#389fda');
+        if (dot) dot.className = 'inline-block w-2 h-2 rounded-full bg-mblue-500 shadow-sm shadow-mblue-500/50 animate-pulse';
       } else if (prob >= 15) {
         stop1.setAttribute('stop-color', '#d97706');
-        stop2.setAttribute('stop-color', '#f59e0b');
-        if (dot) dot.className = 'inline-block w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse';
+        stop2.setAttribute('stop-color', '#fbbf24');
+        if (dot) dot.className = 'inline-block w-2 h-2 rounded-full bg-amber-500 shadow-sm shadow-amber-500/50 animate-pulse';
       } else {
         stop1.setAttribute('stop-color', '#64748b');
         stop2.setAttribute('stop-color', '#94a3b8');
-        if (dot) dot.className = 'inline-block w-2.5 h-2.5 rounded-full bg-slate-400';
+        if (dot) dot.className = 'inline-block w-2 h-2 rounded-full bg-slate-400';
       }
     }
 
@@ -1231,26 +1471,26 @@
       const duelMarginText = document.getElementById('duel-margin-text');
 
       if (m4Quot >= sd4Quot) {
-        duelTag.className = 'text-[10px] font-black px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 shrink-0 whitespace-nowrap';
+        duelTag.className = 'text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200/80 shrink-0 whitespace-nowrap';
         duelTag.innerText = 'M leder';
         duelTitle.innerText = `M leder duellen (+${diffPct}%)`;
         duelDesc.innerText = `M:s 4:e jämförelsetal slår SD:s 4:e mandat med ca ${diffVotes.toLocaleString('sv-SE')} röster.`;
-        duelMarginText.innerHTML = `<span class="text-emerald-700 font-extrabold">M har ett försprång på +${diffPct} procentenheter</span>`;
+        duelMarginText.innerHTML = `<span class="text-emerald-700 font-bold">M har ett försprång på +${diffPct} procentenheter</span>`;
       } else {
-        duelTag.className = 'text-[10px] font-black px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200 shrink-0 whitespace-nowrap';
+        duelTag.className = 'text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200/80 shrink-0 whitespace-nowrap';
         duelTag.innerText = 'SD leder';
         duelTitle.innerText = `M jagar SD (-${diffPct}%)`;
         duelDesc.innerText = `M behöver ca ${diffVotes.toLocaleString('sv-SE')} fler röster (+${diffPct} procentenheter) för att passera SD:s 4:e mandat.`;
-        duelMarginText.innerHTML = `<span class="text-amber-700 font-extrabold">M behöver öka med +${diffPct}% (~${diffVotes.toLocaleString('sv-SE')} röster)</span>`;
+        duelMarginText.innerHTML = `<span class="text-amber-700 font-bold">M behöver öka med +${diffPct}% (~${diffVotes.toLocaleString('sv-SE')} röster)</span>`;
       }
 
       const seatSummary = document.getElementById('seat-summary-tag');
       if (mSeats >= 4) {
         seatSummary.innerText = `${mSeats} M-mandat (Säkrad plats!)`;
-        seatSummary.className = 'text-xs font-black text-emerald-700';
+        seatSummary.className = 'text-xs font-bold text-emerald-700';
       } else {
         seatSummary.innerText = `${mSeats} M-mandat (${diffPct}% till 4:e)`;
-        seatSummary.className = 'text-xs font-bold text-slate-600';
+        seatSummary.className = 'text-xs font-semibold text-slate-600';
       }
     }
 
@@ -1264,18 +1504,18 @@
       if (mSeats >= 4) {
         card1Title.innerText = `${mSeats} M-mandat säkrade!`;
         card1Desc.innerText = 'M når 4 mandat. Platsen i riksdagen är säkrad från dag 1 när Andreas Norlén avstår!';
-        card1StatusIcon.className = 'w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 border border-emerald-200';
+        card1StatusIcon.className = 'w-8 h-8 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 border border-emerald-200/60';
         card1StatusIcon.innerHTML = '<i data-lucide="check" class="w-4 h-4"></i>';
         card1StatusSub.innerText = 'Emil tillträder från Dag 1';
-        card1Tag.className = 'text-[10px] font-black px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 shrink-0 whitespace-nowrap';
+        card1Tag.className = 'text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/80 shrink-0 whitespace-nowrap';
         card1Tag.innerText = 'Dag 1-Plats';
       } else {
         card1Title.innerText = `${mSeats} M-mandat`;
         card1Desc.innerText = 'M når 3 mandat. Platsen avgörs via ersättarkedjan under mandatperioden.';
-        card1StatusIcon.className = 'w-9 h-9 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0 border border-amber-200';
+        card1StatusIcon.className = 'w-8 h-8 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center shrink-0 border border-amber-200/60';
         card1StatusIcon.innerHTML = '<i data-lucide="clock" class="w-4 h-4"></i>';
         card1StatusSub.innerText = 'Kräver 4 mandat för direktplats';
-        card1Tag.className = 'text-[10px] font-black px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200 shrink-0 whitespace-nowrap';
+        card1Tag.className = 'text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200/80 shrink-0 whitespace-nowrap';
         card1Tag.innerText = 'Ersättarläge';
       }
 
@@ -1288,19 +1528,19 @@
         card2Title.innerText = 'Ordinarie tjänstgöring';
         card2Desc.innerText = 'Emil tjänstgör under hela 4-årsperioden som ersättare för talmannen.';
         card2ProbText.innerText = '100% aktiv närvaro';
-        card2Tag.className = 'text-[10px] font-black px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 shrink-0 whitespace-nowrap';
+        card2Tag.className = 'text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/80 shrink-0 whitespace-nowrap';
         card2Tag.innerText = 'Dag 1-Plats';
       } else if (mSeats === 3) {
         card2Title.innerText = `1:e Ersättare (${pAbsence}% chans)`;
         card2Desc.innerText = 'Emil står först i kön för att ersätta Matilda Ekeblad, John Weinerhall eller Magdalena Hermelin.';
         card2ProbText.innerText = 'Mycket hög sannolikhet på 4 år';
-        card2Tag.className = 'text-[10px] font-black px-2.5 py-0.5 rounded-full bg-sky-50 text-mblue-800 border border-mblue-200 shrink-0 whitespace-nowrap';
+        card2Tag.className = 'text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-sky-50 text-mblue-800 border border-mblue-200/80 shrink-0 whitespace-nowrap';
         card2Tag.innerText = '1:e Ersättare';
       } else {
         card2Title.innerText = '2:e Ersättare (~12% chans)';
         card2Desc.innerText = 'Kräver att två av M-ledamöterna är frånvarande samtidigt.';
         card2ProbText.innerText = 'Måttlig sannolikhet';
-        card2Tag.className = 'text-[10px] font-black px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200 shrink-0 whitespace-nowrap';
+        card2Tag.className = 'text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200/80 shrink-0 whitespace-nowrap';
         card2Tag.innerText = '2:e Ersättare';
       }
     }
@@ -1325,24 +1565,24 @@
           c4Badge.innerText = 'Talmansersättare';
           c4Role.innerText = 'Tjänstgörande ledamot (träder in för Andreas Norlén)';
           c4Status.innerText = 'Tjänstgör';
-          c4Status.className = 'text-xs font-bold text-emerald-700 shrink-0';
+          c4Status.className = 'text-xs font-semibold text-emerald-700 shrink-0';
         } else {
           c4Badge.innerText = '1:e Ersättare';
           c4Role.innerText = 'Förste ersättare i kön';
           c4Status.innerText = 'Ersättare';
-          c4Status.className = 'text-xs font-bold text-amber-700 shrink-0';
+          c4Status.className = 'text-xs font-semibold text-amber-700 shrink-0';
         }
       } else {
         if (mSeats >= 4) {
           c4Badge.innerText = 'Ledamot #4';
           c4Role.innerText = 'Tjänstgörande ordinarie riksdagsledamot';
           c4Status.innerText = 'Ordinarie';
-          c4Status.className = 'text-xs font-bold text-emerald-700 shrink-0';
+          c4Status.className = 'text-xs font-semibold text-emerald-700 shrink-0';
         } else {
           c4Badge.innerText = '1:e Ersättare';
           c4Role.innerText = 'Förste ersättare i kön';
           c4Status.innerText = 'Ersättare';
-          c4Status.className = 'text-xs font-bold text-amber-700 shrink-0';
+          c4Status.className = 'text-xs font-semibold text-amber-700 shrink-0';
         }
       }
 
@@ -1354,22 +1594,22 @@
         c5Badge.innerText = 'Tjänstgörande Ledamot';
         c5Role.innerText = 'Tjänstgör från Dag 1 som talmansersättare!';
         c5Prob.innerText = '100%';
-        c5Prob.className = 'text-lg font-black text-emerald-600 block font-mono';
+        c5Prob.className = 'text-lg sm:text-xl font-black text-emerald-600 block font-mono tabular-nums';
       } else if (state.norlen && mSeats === 3) {
         c5Badge.innerText = '1:e Aktive Ersättare';
         c5Role.innerText = 'Träder in vid frånvaro bland M:s 3 tjänstgörande ledamöter';
         c5Prob.innerText = `${state.absence}%`;
-        c5Prob.className = 'text-lg font-black text-mblue-600 block font-mono';
+        c5Prob.className = 'text-lg sm:text-xl font-black text-mblue-700 block font-mono tabular-nums';
       } else if (state.norlen && mSeats === 2) {
         c5Badge.innerText = '2:e Ersättare';
         c5Role.innerText = 'Träder in vid dubbelfrånvaro i delegationen';
         c5Prob.innerText = '12%';
-        c5Prob.className = 'text-lg font-black text-amber-600 block font-mono';
+        c5Prob.className = 'text-lg sm:text-xl font-black text-amber-600 block font-mono tabular-nums';
       } else {
         c5Badge.innerText = 'Ersättare';
         c5Role.innerText = 'Placerad i ersättarkedjan';
         c5Prob.innerText = '< 5%';
-        c5Prob.className = 'text-lg font-black text-slate-500 block font-mono';
+        c5Prob.className = 'text-lg sm:text-xl font-black text-slate-500 block font-mono tabular-nums';
       }
     }
 
@@ -1382,17 +1622,17 @@
         const isM = seat.party === 'm';
 
         const pill = document.createElement('div');
-        pill.className = `p-2.5 rounded-2xl border flex flex-col items-center justify-center transition-all ${
+        pill.className = `p-2 rounded-2xl border flex flex-col items-center justify-center transition-all ${
           isM 
-            ? 'bg-blue-50/90 border-mblue-300 shadow-xs ring-1 ring-mblue-200' 
-            : 'bg-white/90 border-slate-200 shadow-xs'
+            ? 'apple-glass-pill border-mblue-300/80 ring-1 ring-mblue-200/50 bg-mblue-50/70' 
+            : 'apple-glass-inner border-white/80'
         }`;
         
         pill.innerHTML = `
-          <span class="text-[9px] font-mono ${isM ? 'text-mblue-700 font-extrabold' : 'text-slate-400'}">#${seat.totalSeatIndex}</span>
-          <span class="w-3.5 h-3.5 rounded-full my-1 shadow-xs" style="background-color: ${partyInfo.color};"></span>
-          <span class="text-xs font-black ${isM ? 'text-mblue-900' : 'text-slate-800'}">${partyInfo.short}</span>
-          <span class="text-[9px] text-slate-400 font-mono font-bold">${seat.seatNumForParty}:a</span>
+          <span class="text-[9px] font-mono tabular-nums ${isM ? 'text-mblue-700 font-bold' : 'text-slate-400'}">#${seat.totalSeatIndex}</span>
+          <span class="w-2.5 h-2.5 rounded-full my-1 shadow-xs" style="background-color: ${partyInfo.color};"></span>
+          <span class="text-xs font-bold ${isM ? 'text-mblue-900' : 'text-slate-800'}">${partyInfo.short}</span>
+          <span class="text-[9px] text-slate-400 font-mono font-medium">${seat.seatNumForParty}:a</span>
         `;
         grid.appendChild(pill);
       });
@@ -1417,11 +1657,11 @@
           bar.appendChild(segment);
 
           const chip = document.createElement('div');
-          chip.className = 'flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white border border-slate-200 text-xs shadow-xs';
+          chip.className = 'flex items-center gap-1.5 px-3 py-1 rounded-full apple-glass-pill text-xs';
           chip.innerHTML = `
             <span class="w-2.5 h-2.5 rounded-full" style="background-color: ${partyInfo.color};"></span>
-            <span class="font-bold text-slate-700">${partyInfo.short}</span>
-            <span class="font-mono font-black text-slate-900">${count}</span>
+            <span class="font-semibold text-slate-700">${partyInfo.short}</span>
+            <span class="font-mono font-bold text-slate-900 tabular-nums">${count}</span>
           `;
           legend.appendChild(chip);
         }
@@ -1473,7 +1713,7 @@
       syncUrlHash();
       const url = window.location.href;
       navigator.clipboard.writeText(url).then(() => {
-        showToast('Analyslänk kopierad till urklipp!');
+        showToast('Analyslänk kopierad till urklipp');
       }).catch(() => {
         showToast('Kunde inte kopiera automatiskt');
       });
@@ -1495,10 +1735,10 @@
     function triggerCelebration() {
       if (typeof confetti === 'function') {
         confetti({
-          particleCount: 80,
+          particleCount: 75,
           spread: 70,
           origin: { y: 0.6 },
-          colors: ['#005ea2', '#0284c7', '#d97706', '#10b981']
+          colors: ['#005ea2', '#389fda', '#d97706', '#059669']
         });
       }
     }
