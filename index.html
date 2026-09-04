@@ -1073,7 +1073,6 @@
     const TOTAL_VOTES_EST = 300000;
     let hasTriggeredCelebration = false;
     let currentPreset = 'valet2022';
-    let lHasUtjamning = false;
     let calcFrameRequested = false;
 
     const SVG_ICONS = {
@@ -1145,21 +1144,19 @@
         state.mp = 4.6;
         state.norlen = true;
         state.absence = 45;
-        lHasUtjamning = false;
-        toastMsg = 'Valresultatet 2022 laddat (Köplats 3 – 40% Dag 1)';
+        toastMsg = 'Valresultatet 2022 laddat (3 fasta mandat • 1:e utanför)';
       } else if (presetKey === 'novus2026') {
-        state.m = 19.2;
-        state.sd = 20.4;
-        state.s = 34.1;
+        state.m = 19.5;
+        state.sd = 20.5;
+        state.s = 32.5;
         state.l = 2.1;
-        state.v = 6.2;
-        state.c = 4.3;
-        state.kd = 4.1;
+        state.v = 6.0;
+        state.c = 4.5;
+        state.kd = 4.8;
         state.mp = 4.8;
         state.norlen = true;
         state.absence = 45;
-        lHasUtjamning = false;
-        toastMsg = 'Opinionsläget (Novus augusti 2026) laddat';
+        toastMsg = 'Opinionsläget (Novus) laddat (Köplats 3 – L under spärren)';
       } else if (presetKey === 'm4seats') {
         state.m = 20.8;
         state.sd = 19.2;
@@ -1171,7 +1168,6 @@
         state.mp = 4.5;
         state.norlen = true;
         state.absence = 45;
-        lHasUtjamning = false;
         toastMsg = 'Scenariot M 4 Mandat laddat (Köplats 2 – Mandatsprång!)';
         triggerCelebration();
       } else if (presetKey === 'sdduel') {
@@ -1185,7 +1181,6 @@
         state.mp = 4.5;
         state.norlen = true;
         state.absence = 45;
-        lHasUtjamning = false;
         toastMsg = 'Duellscenariot M vs SD laddat (Jämn kamp om Köplats 2)';
       } else if (presetKey === 'lover4') {
         state.m = 18.5;
@@ -1198,7 +1193,6 @@
         state.mp = 4.5;
         state.norlen = true;
         state.absence = 45;
-        lHasUtjamning = true;
         toastMsg = 'Scenariot L över 4% laddat (L tar mandat i länet)';
       }
 
@@ -1348,10 +1342,6 @@
       const queueList = [];
       for (let p in eligibleParties) {
         const curSeats = fixedSeatCounts[p] || 0;
-        // Liberalerna med 0 fasta mandat deltar bara i utjämningskön om de har nationell utj.-allokering (t.ex. L över 4%-scenariot)
-        if (p === 'l' && curSeats === 0 && !lHasUtjamning) {
-          continue;
-        }
         const divisor = (curSeats === 0) ? 1.2 : (2 * curSeats + 1);
         const quot = eligibleParties[p].votes / divisor;
         queueList.push({
@@ -1436,7 +1426,7 @@
       } else {
         emilSubtext = `Köplats ${mPlacering} • 1:e Ers.`;
         statusHeadline = 'Emil är 1:e aktive ersättare';
-        statusBadgeText = `< 5% Osannolikt (Köplats ${mPlacering})`;
+        statusBadgeText = `1:e Ersättare (3 fasta • 1:e utanför)`;
         statusBadgeClass = 'bg-slate-100 text-slate-700 border-slate-200/80';
         statusIconName = 'clock';
       }
@@ -1476,7 +1466,7 @@
         } else {
           statMSeats.innerText = `${mFixed} st`;
           statMSeats.className = 'text-base sm:text-lg font-extrabold text-slate-700 block mt-0.5 tabular-nums';
-          statMSeatsSub.innerText = '3 säkra fasta mandat';
+          statMSeatsSub.innerText = '3 fasta • 1:e utanför';
         }
       }
 
@@ -1526,7 +1516,7 @@
         } else {
           statPos.innerText = '1:e Ers.';
           statPos.className = 'text-base sm:text-lg font-extrabold text-slate-600 block mt-0.5 truncate';
-          statPosSub.innerText = 'Bakom SD & övriga';
+          statPosSub.innerText = 'Närmast nästa mandat';
         }
       }
 
@@ -1682,12 +1672,12 @@
           duelTag.innerText = 'SD leder (Köplats 2)';
         }
         if (duelTitle) duelTitle.innerText = `M jagar SD (-${diffPct}%)`;
-        if (duelDesc) duelDesc.innerText = `M:s 4:e jämförelsetal (${m4Quot.toLocaleString('sv-SE')}) ligger bakom SD (${sd4Quot.toLocaleString('sv-SE')}). M har Köplats ${mPlacering}.`;
-        if (duelMarginText) duelMarginText.innerHTML = `<span class="text-amber-700 font-bold">M behöver öka med +${diffPct}% (~${diffVotes.toLocaleString('sv-SE')} röster) för Köplats 2</span>`;
+        if (duelDesc) duelDesc.innerText = `M:s 4:e jämförelsetal (${m4Quot.toLocaleString('sv-SE')}) ligger bakom SD (${sd4Quot.toLocaleString('sv-SE')}). M är 1:e utanför och närmast att ta nästa utjämningsmandat!`;
+        if (duelMarginText) duelMarginText.innerHTML = `<span class="text-amber-700 font-bold">M behöver öka med +${diffPct}% (~${diffVotes.toLocaleString('sv-SE')} röster) för att passera SD</span>`;
 
         const seatSummary = document.getElementById('seat-summary-tag');
         if (seatSummary) {
-          const mLabel = mPlacering <= 3 ? '3–4 M-mandat' : '3 M-mandat';
+          const mLabel = mPlacering <= 3 ? '3–4 M-mandat' : '3 M-mandat (1:e utanför)';
           seatSummary.innerText = `${mLabel} (${diffPct}% till SD)`;
           seatSummary.className = 'text-xs font-semibold text-slate-600';
         }
@@ -1726,13 +1716,13 @@
         card1Tag.className = 'text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200/80 shrink-0 whitespace-nowrap';
         card1Tag.innerText = '40% Dag 1-chans';
       } else {
-        card1Title.innerText = '3 M-mandat säkrade';
-        card1Desc.innerText = 'M har 3 fasta mandat men ligger bakom SD och andra partier i utjämningskön (< 5 % chans till ett 4:e).';
+        card1Title.innerText = '3 M-mandat säkrade (1:e utanför)';
+        card1Desc.innerText = 'M har 3 fasta mandat och är 1:e utanför i utjämningskön (närmast att ta nästa utjämningsmandat). Vid 3 mandat kliver Emil Steen in som 1:e aktive ersättare!';
         card1StatusIcon.className = 'w-8 h-8 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center shrink-0 border border-slate-200/60';
         card1StatusIcon.innerHTML = getIconSvg('clock', 'w-4 h-4');
-        card1StatusSub.innerText = 'Kräver 4 mandat för direktplats';
+        card1StatusSub.innerText = 'Emil är 1:e aktive ersättare';
         card1Tag.className = 'text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200/80 shrink-0 whitespace-nowrap';
-        card1Tag.innerText = '< 5% Dag 1-chans';
+        card1Tag.innerText = 'Köplats 4 (1:e utanför)';
       }
 
       const card2Title = document.getElementById('card2-title');
@@ -1800,9 +1790,9 @@
         c5Prob.className = 'text-lg sm:text-xl font-black text-mblue-700 block font-mono tabular-nums';
       } else {
         c5Badge.innerText = '1:e Aktive Ersättare';
-        c5Role.innerText = 'Träder in vid frånvaro bland M:s 3 tjänstgörande ledamöter';
+        c5Role.innerText = '1:e ersättare vid 3 M-mandat. Träder in vid frånvaro bland M:s tjänstgörande ledamöter.';
         c5Prob.innerText = `${totalProbability.toFixed(1)}%`;
-        c5Prob.className = 'text-lg sm:text-xl font-black text-slate-500 block font-mono tabular-nums';
+        c5Prob.className = 'text-lg sm:text-xl font-black text-slate-600 block font-mono tabular-nums';
       }
     }
 
@@ -1885,10 +1875,10 @@
 
           let displayCount = `${count}`;
           if (p === 'm') {
-            displayCount = mPlacering <= 2 ? '4 (troligt)' : '3–4 (40%)';
+            displayCount = mPlacering <= 2 ? '4 (troligt)' : (mPlacering === 3 ? '3–4 (40%)' : '3 (1:e utanför)');
           } else if (p === 'sd') {
             const sdRank = queueList.findIndex(x => x.party === 'sd') + 1;
-            displayCount = sdRank <= 2 ? '4 (troligt)' : '3–4';
+            displayCount = sdRank <= 2 ? '4 (troligt)' : (sdRank === 3 ? '3–4' : '3');
           }
 
           const chip = document.createElement('div');
