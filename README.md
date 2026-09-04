@@ -16,7 +16,7 @@ Appen kan hostas direkt på **GitHub Pages** utan något build-steg.
   - Vid 3 M-mandat kliver Magdalena Hermelin in som talmansersättare och Emil Steen blir **1:e aktive ersättare** (45% chans över 4 år).
 - **Duellmodul (M vs SD)**: Jämför M:s och SD:s jämförelsetal vid delare 7 och visar marginalen i både procentenheter och röster.
 - **Interaktiv SVG-mätare (Gauge)**: Visar realtidsberäknad sannolikhet och dynamisk statusbadge.
-- **Snabbscenarier (Presets)**: Valet 2022, Senaste opinionsmätning, M tar 4 mandat, SD-duell, L över/under 4%.
+- **Snabbscenarier (Presets)**: Valet 2022, Senaste opinionsmätning (Indikator Opinion), M tar 4 mandat, SD-duell, L över/under 4%.
 - **Dela & Spara**: Alla slider- och reglagelägen synkroniseras automatiskt i webbadressens URL-hash.
 - **Mobilanpassad & Responsiv**: Optimerad för smartphones med micro-steppers (+/- 0.1%), tydliga touchytor och mörkt Moderat-tema.
 
